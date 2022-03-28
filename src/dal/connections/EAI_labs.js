@@ -11,6 +11,7 @@ module.exports = function (callback) {
         callback(connection);
         return;
     }
+
     const options = {useUnifiedTopology: true};
     MongoClient.connect(config.mongo.hosts.eai_labs, options, function (err, db) {
         if (err) throw err;
