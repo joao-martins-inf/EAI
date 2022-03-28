@@ -39,9 +39,14 @@ Corpus.prototype.getDocumentsByLabel = async function (label, limit) {
         // Establish connection to db
         var options = {skip: 0}
         if (limit) {
-            options.limit = limit;
+            options.limit = parseInt(limit);
         }
-        db.collection('corpus').find({"label": label}, options).toArray(function (err, docs) {
+        
+
+        const filter = label ? {"label": label} : {};
+
+        console.log(filter);
+        db.collection('corpus').find(filter, options).toArray(function (err, docs) {
             if (err) reject(err);
             else {
                 resolve(docs);
