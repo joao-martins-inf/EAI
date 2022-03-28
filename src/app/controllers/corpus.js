@@ -12,7 +12,7 @@ class corpusController {
 
     async indexByLabel(req, res) {
         const {label} = req.params;
-        const {limit} = req.params;
+        const {limit} = req.query;
         db.openDbConnection(function () {
             corpus.getDocumentsByLabel(label, limit, function (docs) {
                 return res.json(docs);
