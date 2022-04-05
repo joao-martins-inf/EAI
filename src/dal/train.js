@@ -24,12 +24,22 @@ Train.prototype.getTrainingSet = async function () {
  // Establish connection to db
  var db = await Mongo.getDbConnection();
  return new Promise((resolve, reject) => {
-     db.collection('trainingSet').find({}, {}).toArray(function (err, docs) {
-         if (err) reject(err);
-         else {
-             resolve(docs);
+
+    db.collection('trainingSet').aggregate([
+        { $lookup:
+           {
+             from: 'corpus',
+             localField: 'corpus_is',
+             foreignField: 'id',
+             as: 'corpus_details'
+           }
          }
-     });
+        ]).toArray(function(err, res) {
+            if (err) reject(err);
+            else {
+                resolve(docs);
+            }
+      });
  })
 
 };
