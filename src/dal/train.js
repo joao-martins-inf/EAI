@@ -29,7 +29,7 @@ Train.prototype.getTrainingSet = async function () {
         { $lookup:
            {
              from: 'corpus',
-             localField: 'corpus_is',
+             localField: 'corpus_id',
              foreignField: 'id',
              as: 'corpus_details'
            }
@@ -37,7 +37,7 @@ Train.prototype.getTrainingSet = async function () {
         ]).toArray(function(err, res) {
             if (err) reject(err);
             else {
-                resolve(docs);
+                resolve(res);
             }
       });
  })
