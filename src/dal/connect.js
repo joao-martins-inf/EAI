@@ -1,7 +1,8 @@
 /**
  * Created by
  */
-const db_eia = require('./connections/EAI_labs');
+import db_eia from './connections/EAI_labs.js';
+//const db_eia = require('./connections/EAI_labs');
 
 const Connection =  function(){};
 
@@ -13,5 +14,4 @@ Connection.prototype.getDbConnection = async function(){
     })
 };
 
-
-exports.Connection = new Connection();
+export const Mongo = new Connection();

@@ -4,4 +4,5 @@ const ngram = (input, n) => {
     return nGram(n)(input);
 }
 
-module.exports = ngram;
+export default ngram;
+//module.exports = ngram;

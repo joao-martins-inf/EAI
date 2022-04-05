@@ -1,7 +1,7 @@
 /**
  * Created by
  */
-var config = {
+export default  {
     environment: "PRD",
     mongo: {
         port: 27017,
@@ -13,5 +13,3 @@ var config = {
         }
     },
 };
-
-module.exports = config;

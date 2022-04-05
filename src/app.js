@@ -1,7 +1,10 @@
-const express = require('express');
-const routes = require('./routes');
-const cors = require('cors');
-const corsConfig = require('./config/cors');
+import express from 'express';
+import routes from './routes.js';
+//const routes = require('./routes');
+import cors from 'cors';
+import corsConfig from './config/cors.js';
+import bodyParser from 'body-parser';
+//const corsConfig = require('./config/cors');
 
 //const db = require('./dal');
 
@@ -11,13 +14,14 @@ const corsConfig = require('./config/cors');
 class App {
     constructor() {
         this.server = express();
-
+        this.server.use(bodyParser.urlencoded({ extended: true }))
         this.middleware();
 
         this.routes();
     }
 
     middleware() {
+        this.server.use(express.json());
         this.server.use(cors(corsConfig))
     }
     /**
@@ -28,4 +32,4 @@ class App {
     }
 }
 
-module.exports = new App().server;
+export default new App().server;

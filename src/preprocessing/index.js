@@ -1,16 +1,15 @@
-const clean = require('./clean');
-const tokenization = require('./tokenization');
-const { stemmerWithNgram, stemmerWithSplit } = require('./stemming');
+import clean from './clean.js';
+import tokenization from './tokenization.js';
+import { stemmerWithNgram, stemmerWithSplit} from './stemming.js';
 
 const index = (text, number) => {
+    // remove stopword
     const cleanedText = clean(text);
-    console.log('cleanedText', cleanedText);
     const stemmedText = stemmerWithSplit(cleanedText);
-    console.log('stemmedText', stemmedText);
     const result = tokenization(stemmedText, number);
-    console.log('result', result);
 
     return result;
 };
 
-module.export = index;
+export default index;
+//module.export = index;

@@ -1,11 +1,13 @@
 /**
  * Created by...
  */
-var MongoClient = require('mongodb').MongoClient,
-    config = require('../../config/config'),
-    connection;
+import mongo from "mongodb";
+const MongoClient = mongo.MongoClient;
+import config from "../../config/config.js";
 
-module.exports = function (callback) {
+var connection;
+
+export default function (callback) {
     //if already we have a connection, don't connect to database again
     if (connection) {
         callback(connection);
@@ -19,4 +21,6 @@ module.exports = function (callback) {
         console.log("connected to " + config.mongo.hosts.eai_labs);
         callback(connection);
     });
+
+
 };

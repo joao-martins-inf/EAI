@@ -11,7 +11,7 @@ const removeSpecialCharactersAndNumbers = (input) => {
 }
 
 const cleanInput = (input) => {
-    return removeSpecialCharactersAndNumbers(trim(toLowerCase(input)));
+    return trim(removeSpecialCharactersAndNumbers(toLowerCase(input)));
 }
 
-module.exports = cleanInput;
+export default cleanInput;

@@ -1,9 +1,10 @@
 /**
  *
  */
- var Server = require('mongodb').Server,
- config = require('../config/config'),
- Mongo = require('./connect').Connection;
+import mongo from "mongodb";
+const Server = mongo.Server;
+import config from '../config/config.js';
+import {Mongo} from './connect.js';
 
 
 var Train = function () {
@@ -23,14 +24,25 @@ Train.prototype.getTrainingSet = async function () {
  // Establish connection to db
  var db = await Mongo.getDbConnection();
  return new Promise((resolve, reject) => {
-     db.collection('trainingSet').find({}, {}).toArray(function (err, docs) {
-         if (err) reject(err);
-         else {
-             resolve(docs);
+
+    db.collection('trainingSet').aggregate([
+        { $lookup:
+           {
+             from: 'corpus',
+             localField: 'corpus_id',
+             foreignField: 'id',
+             as: 'corpus_details'
+           }
          }
-     });
+        ]).toArray(function(err, res) {
+            if (err) reject(err);
+            else {
+                resolve(res);
+            }
+      });
  })
 
 };
 
-exports.Train = new Train();
+export const train = new Train();
+//exports.Train = new Train();
