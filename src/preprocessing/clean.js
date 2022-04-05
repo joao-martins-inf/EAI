@@ -14,4 +14,5 @@ const cleanInput = (input) => {
     return removeSpecialCharactersAndNumbers(trim(toLowerCase(input)));
 }
 
-module.exports = cleanInput;
+export default cleanInput;
+//module.exports = cleanInput;

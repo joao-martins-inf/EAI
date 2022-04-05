@@ -1,9 +1,10 @@
 /**
  *
  */
- var Server = require('mongodb').Server,
- config = require('../config/config'),
- Mongo = require('./connect').Connection;
+import mongo from "mongodb";
+const Server = mongo.Server;
+import config from '../config/config.js';
+import {Mongo} from './connect.js';
 
 
 var Train = function () {
@@ -33,4 +34,5 @@ Train.prototype.getTrainingSet = async function () {
 
 };
 
-exports.Train = new Train();
+export const train = new Train();
+//exports.Train = new Train();

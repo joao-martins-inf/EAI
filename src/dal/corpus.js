@@ -1,9 +1,10 @@
 /**
  *
  */
-var Server = require('mongodb').Server,
-    config = require('../config/config'),
-    Mongo = require('./connect').Connection;
+import mongo from "mongodb";
+const Server = mongo.Server;
+import config from '../config/config.js';
+import {Mongo} from './connect.js';
 
 
 var Corpus = function () {
@@ -44,8 +45,6 @@ Corpus.prototype.getDocumentsByLabel = async function (label, limit) {
         
 
         const filter = label ? {"label": label} : {};
-
-        console.log(filter);
         db.collection('corpus').find(filter, options).toArray(function (err, docs) {
             if (err) reject(err);
             else {
@@ -56,9 +55,9 @@ Corpus.prototype.getDocumentsByLabel = async function (label, limit) {
 
 };
 
-Corpus.prototype.getDocumentsById = async function (id, callback) {
+Corpus.prototype.getDocumentsById = async function (id) {
     // Establish connection to db
-    var db = Mongo.getDbConnection();
+    var db = await Mongo.getDbConnection();
     return new Promise((resolve, reject) => {
         db.collection('corpus').find({"id": id}, {}).toArray(function (err, docs) {
             if (err) reject(err);
@@ -69,4 +68,6 @@ Corpus.prototype.getDocumentsById = async function (id, callback) {
     })
 };
 
-exports.Corpus = new Corpus();
+
+export const corpus = new Corpus();
+//exports.Corpus = new Corpus();

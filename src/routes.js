@@ -1,10 +1,12 @@
-const express = require('express');
-const cleanText = require('./preprocessing');
+//const express = require('express');
+import express from 'express';
+//const cleanText = require('./preprocessing');
+import cleanText from './preprocessing/index.js';
 
 const Router = express.Router;
 
-const CorpusController = require('./app/controllers/corpus');
-const TrainController = require('./app/controllers/train');
+import { CorpusController } from './app/controllers/corpus.js';
+import { TrainController } from './app/controllers/train.js';
 
 const routes = new Router();
 
@@ -22,4 +24,4 @@ routes.post('/clean', (req, res) => {
     return res.json(result);
 })
 
-module.exports = routes;
+export default routes;

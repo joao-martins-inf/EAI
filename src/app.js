@@ -1,7 +1,9 @@
-const express = require('express');
-const routes = require('./routes');
-const cors = require('cors');
-const corsConfig = require('./config/cors');
+import express from 'express';
+import routes from './routes.js';
+//const routes = require('./routes');
+import cors from 'cors';
+import corsConfig from './config/cors.js';
+//const corsConfig = require('./config/cors');
 
 //const db = require('./dal');
 
@@ -28,4 +30,4 @@ class App {
     }
 }
 
-module.exports = new App().server;
+export default new App().server;

@@ -1,6 +1,9 @@
-const clean = require('./clean');
-const tokenization = require('./tokenization');
-const { stemmerWithNgram, stemmerWithSplit } = require('./stemming');
+//const clean = require('./clean');
+import clean from './clean.js';
+//const tokenization = require('./tokenization');
+import tokenization from './tokenization.js';
+//const { stemmerWithNgram, stemmerWithSplit } = require('./stemming');
+import { stemmerWithNgram, stemmerWithSplit} from './stemming.js';
 
 const index = (text, number) => {
     const cleanedText = clean(text);
@@ -13,4 +16,5 @@ const index = (text, number) => {
     return result;
 };
 
-module.export = index;
+export default index;
+//module.export = index;

@@ -1,9 +1,9 @@
-var corpus = require('../../dal/corpus').Corpus;
+import {corpus} from '../../dal/corpus.js'
 
 class corpusController {
     async index(req, res) {
         const {limit, label} = req.query;
-        const docs = await corpus.getDocumentsByLabel(label, limit);
+        const docs = await corpus.getDocumentsByLabel(label.toString(), limit);
         return res.json(docs);
     }
 
@@ -14,4 +14,4 @@ class corpusController {
     }
 }
 
-module.exports = new corpusController();
+export const CorpusController = new corpusController()
