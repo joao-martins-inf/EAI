@@ -1,6 +1,7 @@
 import {train} from '../../dal/train.js';
 import preprocess from '../../preprocessing/index.js';
 import fs from 'fs';
+import { addUniqueTerms } from '../../features/bagOfWords.js';
 
 
 class trainController {
@@ -10,26 +11,40 @@ class trainController {
     }
 
     async process(req,res) {
+
         const docs = await train.getTrainingSet();
-        //console.log(docs[0]);
         const corpus = docs.map((doc) => doc.corpus_details[0]);
 
         const happyDocs = corpus.filter((item) => { return item.label === 'happy'});
         const notHappyDocs = corpus.filter((item) => {return item.label === 'not happy'});
+        const happyUniqueUnigram = [];
+        const happyUniqueBigram = [];
+        const notHappyUniqueUnigram = [];
+        const notHappyUniqueBigram = [];
 
         const happyResults = happyDocs.map((doc) => {
+            const n1 = preprocess(doc.description, 1);
+            const n2 = preprocess(doc.description, 2);
+            happyUniqueUnigram = addUniqueTerms(happyUniqueUnigram, n1, doc.id);
+            happyUniqueBigram = addUniqueTerms(happyUniqueBigram, n2, doc.id);
+
             return {
                 id: doc.id,
-                n1: preprocess(doc.description, 1),
-                n2: preprocess(doc.description, 2)
+                n1,
+                n2
             }
         });
 
         const notHappyResults = notHappyDocs.map((doc) => {
+            const n1 = preprocess(doc.description, 1);
+            const n2 = preprocess(doc.description, 2);
+            notHappyUniqueUnigram = addUniqueTerms(notHappyUniqueUnigram, n1);
+            notHappyUniqueBigram = addUniqueTerms(notHappyUniqueBigram, n2);
+
             return {
                 id: doc.id,
-                n1: preprocess(doc.description, 1),
-                n2: preprocess(doc.description, 2)
+                n1,
+                n2
             }
         })
 

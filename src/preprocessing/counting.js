@@ -8,8 +8,8 @@ export function characters(text){
 
 export function numberOfOccurrences(term, text) {
     return text.split(' ').reduce((total, item) => {
-        return item === term ? total++ : total;
-    }, 0)
+        return item === term ? total += 1 : total;
+    }, 0);
 }
 
 export function exists(term, text) {

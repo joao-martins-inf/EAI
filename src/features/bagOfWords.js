@@ -1,39 +1,54 @@
-import {tf, idf} from '../preprocessing/counting';
+import {tf, idf, numberOfOccurrences, tfidf } from '../preprocessing/counting.js';
+import Term from '../app/class/term.js'
 
-export const addUniqueTerms = (arrTerms1, arrTerms2) => {
+export const addUniqueTerms = (arrTerms1, arrTerms2, docId) => {
     arrTerms2.forEach((word) => {
-        arrTerms1.indexOf(word) === -1 ? arrTerms1.push(word) : null;
+        arrTerms1.find((term) => term.name === word)  
+            ? null
+            : arrTerms1.push(new Term(word, 1, 1, docId));
     })
+
+    return arrTerms1;
 }
 
 export const binaryVector = (bagOfWordsArr, termsArr) => {
-    const result = [];
-
-    termsArr.forEach((word) => {
-        result.push(bagOfWordsArr.indexOf(word) !== -1 ? 1 : 0);
+    return termsArr.map((word) => {
+        return bagOfWordsArr.indexOf(word) !== -1 ? 1 : 0;
     })
-
-    return result;
 }
 
-export const numberOfOccurrencesVector = (arr) => {
-    return arr.reduce((prev, curr) => {
-        return curr === 1 ? prev + 1 : prev;
-    }, 0);
-}
-
-export const tfVector = (bagOfWordsArr, termsArr) => {
-    return bagOfWordsArr.forEach((word) => {
-        return tf(word, termsArr.join(' '));
+export const numberOfOccurrencesVector = (bagOfWordsArr, termsArr) => {
+    return termsArr.map((word) => {
+        return numberOfOccurrences(word, bagOfWordsArr.join(' '))
     });
 }
 
-export const idfVector = (bagOfWordsArr, termsArr) => {
-    return bagOfWordsArr.forEach((word) => {
-        return idf(word, termsArr.join(' '));
+export const tfVector = (bagOfWordsArr, termsArr) => {
+    return termsArr.map((word) => {
+        return tf(word, bagOfWordsArr.join(' '));
+    });
+}
+
+export const idfVector = (nDocs, termsArr) => {
+    return termsArr.map((word) => {
+        return idf(word, bagOfWordsArr.join(' '));
     });
 }
 
 export const tfidfVector = (bagOfWordsArr, termsArr) => {
-    return tfVector(bagOfWordsArr, termsArr) - idfVector(bagOfWordsArr, termsArr);
+    const tfVector = tfVector(bagOfWordsArr, termsArr);
+    const idfVector = idfVector(bagOfWordsArr, termsArr);
+
+    return termsArr.map((x, i) => {
+        return tfidf(tfVector[i], idfVector[i])
+    });
+    
+}
+
+export const sumVector = (termsArr) => {
+
+}
+
+export const avgVector = (termsArr) => {
+
 }

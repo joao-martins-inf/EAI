@@ -2,7 +2,7 @@ import clean from './clean.js';
 import tokenization from './tokenization.js';
 import removeStopwords from './stopwords.js';
 import { stemmerWithNgram, stemmerWithSplit} from './stemming.js';
-import { addUniqueTerms } from '../features/bagOfWords';
+import { addUniqueTerms } from '../features/bagOfWords.js';
 
 const index = (text, number) => {
     const stopwordsRemoved = removeStopwords(text.split(' '));
@@ -10,11 +10,7 @@ const index = (text, number) => {
     const stemmedText = stemmerWithSplit(cleanedText);
     const tokenizedText = tokenization(stemmedText, number);
 
-    const result = [];
-    addUniqueTerms(result, tokenizedText); 
-
-    return result;
+    return tokenizedText;
 };
 
 export default index;
-//module.export = index;
