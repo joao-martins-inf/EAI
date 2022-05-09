@@ -20,15 +20,12 @@ export function characters(text) {
  * Number of occurrences of a term in a text
  * @param term {string} term
  * @param text {string} text
- * @param callback {function}
- * @returns {void} number of occurrences of a term in a text
+ * @returns {number} number of occurrences of a term in a text
  */
-export function numberOfOccurrences(term, text, callback) {
-    const res = text.split(' ').reduce((total, item) => {
+export function numberOfOccurrences(term, text) {
+    return text.split(' ').reduce((total, item) => {
         return item === term ? total += 1 : total;
     }, 0);
-
-    callback(res);
 }
 
 /**
