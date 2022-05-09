@@ -1,7 +1,5 @@
-const { removeStopwords, eng } = require('stopword')
+import { removeStopwords, eng } from 'stopword';
 
-const removeStopwordsfromInput = (input) => {
+export default (input) => {
     return removeStopwords(input, eng);
 }
-
-module.exports = removeStopwordsfromInput;

@@ -20,8 +20,8 @@ export function tf(term, text) {
     return numberOfOccurrences(term, text) / words(text);
 }
 
-export function idf(nDocs, ) {
-
+export function idf(nDocs, value) {
+    return Math.log(nDocs / value);
 }
 
 export function tfidf(tf, idf) {
