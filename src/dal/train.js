@@ -20,6 +20,10 @@ Train.prototype.insert = async function (record) {
  });
 };
 
+/**
+ *
+ * @returns {Promise<[{corpus, corpus_details: []}]>}
+ */
 Train.prototype.getTrainingSet = async function () {
  // Establish connection to db
  var db = await Mongo.getDbConnection();

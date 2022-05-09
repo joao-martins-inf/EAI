@@ -2,6 +2,7 @@
  *
  */
 import mongo from "mongodb";
+
 const Server = mongo.Server;
 import config from '../config/config.js';
 import {Mongo} from './connect.js';
@@ -31,7 +32,6 @@ Corpus.prototype.getDocuments = async function () {
             }
         });
     })
-
 };
 
 Corpus.prototype.getDocumentsByLabel = async function (label, limit) {
@@ -42,7 +42,7 @@ Corpus.prototype.getDocumentsByLabel = async function (label, limit) {
         if (limit) {
             options.limit = parseInt(limit);
         }
-        
+
 
         const filter = label ? {"label": label} : {};
         db.collection('corpus').find(filter, options).toArray(function (err, docs) {
@@ -70,4 +70,3 @@ Corpus.prototype.getDocumentsById = async function (id) {
 
 
 export const corpus = new Corpus();
-//exports.Corpus = new Corpus();

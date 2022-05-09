@@ -1,16 +1,28 @@
-//const { stemmer } = require('stemmer');
 import {stemmer} from "stemmer";
 import nGram from './tokenization.js';
-//const nGram = require('./tokenization');
 
+/**
+ * converts ethe text to his base form (split)
+ * @param text {string} text
+ * @returns {string[]}
+ */
 export const stemmerWithSplit = (text) => {
     return text.split(' ').map((word) => {
         return stemmer(word)
     })
 }
 
+/**
+ * converts ethe text to his base form (n-gram)
+ * @param text {string[]} text
+ * @param n {number} n-gram value
+ * @returns {string[][]}
+ */
 export const stemmerWithNgram = (text, n) => {
-    return nGram(text, n).map((word) => {
-        return stemmer(word)
+    //TODO this function prob doesnt work
+    return nGram(text, n).map(wordList => {
+        return wordList.map(word => {
+            return stemmer(word)
+        })
     });
 }

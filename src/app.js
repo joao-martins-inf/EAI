@@ -1,15 +1,11 @@
 import express from 'express';
 import routes from './routes.js';
-//const routes = require('./routes');
 import cors from 'cors';
 import corsConfig from './config/cors.js';
 import bodyParser from 'body-parser';
-//const corsConfig = require('./config/cors');
-
-//const db = require('./dal');
 
 /**
- *
+ * This class manages the express server
  */
 class App {
     constructor() {

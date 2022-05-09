@@ -1,16 +1,23 @@
 import clean from './clean.js';
 import tokenization from './tokenization.js';
 import removeStopwords from './stopwords.js';
-import { stemmerWithNgram, stemmerWithSplit} from './stemming.js';
-import { addUniqueTerms } from '../features/bagOfWords.js';
+import {stemmerWithSplit} from './stemming.js';
 
+/**
+ * Does all the preprocessing steps
+ * @param text {string} text
+ * @param number {number} n-gram value
+ * @returns {string[][]}
+ */
 const index = (text, number) => {
-    const stopwordsRemoved = removeStopwords(text.split(' '));
-    const cleanedText = clean(stopwordsRemoved.join(' '));
+    //remove stopWords
+    const stopWordsRemoved = removeStopwords(text.split(' '));
+    //clean text
+    const cleanedText = clean(stopWordsRemoved.join(' '));
+    //apply stemming
     const stemmedText = stemmerWithSplit(cleanedText);
-    const tokenizedText = tokenization(stemmedText, number);
-
-    return tokenizedText;
+    //split by tokens
+    return tokenization(stemmedText, number);
 };
 
 export default index;
