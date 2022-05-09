@@ -1,14 +1,17 @@
-const clean = require('./clean');
-const tokenization = require('./tokenization');
-const { stemmerWithNgram, stemmerWithSplit } = require('./stemming');
+import clean from './clean.js';
+import tokenization from './tokenization.js';
+import removeStopwords from './stopwords.js';
+import { stemmerWithNgram, stemmerWithSplit} from './stemming.js';
+import { addUniqueTerms } from '../features/bagOfWords';
 
 const index = (text, number) => {
-    const cleanedText = clean(text);
-    console.log('cleanedText', cleanedText);
+    const stopwordsRemoved = removeStopwords(text.split(' '));
+    const cleanedText = clean(stopwordsRemoved.join(' '));
     const stemmedText = stemmerWithSplit(cleanedText);
-    console.log('stemmedText', stemmedText);
-    const result = tokenization(stemmedText, number);
-    console.log('result', result);
+    const tokenizedText = tokenization(stemmedText, number);
+
+    const result = [];
+    addUniqueTerms(result, tokenizedText); 
 
     return result;
 };

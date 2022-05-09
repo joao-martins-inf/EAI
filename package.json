@@ -12,6 +12,7 @@
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.17.3",
+    "fs": "^0.0.1-security",
     "mongodb": "^4.4.1",
     "n-gram": "^2.0.1",
     "stemmer": "^2.0.0",
