@@ -1,4 +1,8 @@
 /**
+ * @module clean
+ */
+
+/**
  * convert a text to lower case
  * @param input {string} text
  * @returns {string}

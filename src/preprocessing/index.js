@@ -1,3 +1,6 @@
+/**
+ * @module preprocess
+ */
 import clean from './clean.js';
 import tokenization from './tokenization.js';
 import removeStopwords from './stopwords.js';

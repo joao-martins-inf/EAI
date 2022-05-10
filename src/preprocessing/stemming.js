@@ -1,8 +1,12 @@
+/**
+ * @module stemmer
+ */
 import {stemmer} from "stemmer";
 import nGram from './tokenization.js';
 
 /**
  * converts ethe text to his base form (split)
+ * @method
  * @param text {string} text
  * @returns {string[]}
  */
@@ -14,6 +18,7 @@ export const stemmerWithSplit = (text) => {
 
 /**
  * converts ethe text to his base form (n-gram)
+ * @method Stemming
  * @param text {string[]} text
  * @param n {number} n-gram value
  * @returns {string[][]}

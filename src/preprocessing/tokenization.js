@@ -1,3 +1,6 @@
+/**
+ * @module tokenization
+ */
 import { nGram } from 'n-gram';
 
 /**
