@@ -41,9 +41,7 @@ export const binaryVector = (bagOfWordsArr, termsArr) => {
  */
 export const numberOfOccurrencesVector = (bagOfWordsArr, termsArr) => {
     bagOfWordsArr.forEach(term => {
-        numberOfOccurrences(term.name, termsArr.join(''), (res) => {
-            term.setOccurrences(res);
-        });
+        term.setOccurrences(numberOfOccurrences(term.name, termsArr.join(' ')));
     });
     return bagOfWordsArr;
 }
