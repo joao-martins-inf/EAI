@@ -19,7 +19,7 @@ const toLowerCase = (input) => {
  * @returns {string}
  */
 const trim = (input) => {
-    return input.trim();
+    return input.trim().replace(/\s\s+/g, ' ');;
 }
 
 /**
@@ -33,7 +33,7 @@ const removeSpecialCharactersAndNumbers = (input) => {
 
 /**
  * Applies every cleaning function
- * @param input {string} text
+ * @param {string} input text
  * @returns {string}
  */
 const cleanInput = (input) => {

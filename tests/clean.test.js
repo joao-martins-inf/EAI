@@ -1,5 +1,7 @@
-const cleanInput = require('../src/preprocessing/clean.js');
+import clean from '../src/preprocessing/clean.js';
 
-test('Applies every cleaning function', () => {
-   expect(1===1);
-});
+describe('clean', () => {
+    test('Applies every cleaning function', () => {
+        expect(clean('  Success is  the PP2ower  . 2%')).toBe('success is the ppower');
+    });
+})

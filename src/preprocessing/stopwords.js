@@ -5,7 +5,7 @@ import { removeStopwords, eng } from 'stopword';
 
 /**
  * @method
- * @param {string} input
+ * @param {array<string>} input
  * @returns {*}
  */
 export default (input) => {

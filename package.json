@@ -7,7 +7,7 @@
     "dev": "nodemon src/server.js",
     "start": "node src/server.js",
     "doc": "jsdoc -c jsdoc.json",
-    "test": "jest --verbose tests"
+    "test": "jest --verbose --coverage tests"
   },
   "type": "module",
   "author": "",
