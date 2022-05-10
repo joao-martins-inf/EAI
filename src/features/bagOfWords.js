@@ -68,7 +68,7 @@ export const tfVector = (bagOfWordsArr, termsArr) => {
 export const idfVector = (bagOfWords, nDocs, termsArr) => {
     //TODO já voltamos
     bagOfWords.forEach(term => {
-        term.setIdf(idf(term.occurrences, nDocs))
+        term.setIdf(idf(nDocs,term.occurrences))
     });
     return bagOfWords;
 }
