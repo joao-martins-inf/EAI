@@ -11,4 +11,12 @@
  * @property {number} id documentid
  */
 
+
+/**
+ * @typedef {Object} vector
+ * @property {string} label
+ * @property {Array} bagOfWords
+ * @property {Array[number]} tfidf
+ * @property {Array[number]} idf
+ */
 // etc...

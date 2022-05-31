@@ -12,22 +12,14 @@ export default class Term {
      * @param metric {?number}
      */
     constructor(name, binary, occurrences, docId, tf = 0, idf = 0, tfidf = 0, metric = null) {
-        /** @private **/
-        this.name = name;
-        /** @private **/
-        this.binary = binary;
-        /** @private **/
-        this.occurrences = occurrences;
-        /** @private **/
-        this.docId = docId;
-        /** @private **/
-        this.tf = tf;
-        /** @private **/
-        this.idf = idf;
-        /** @private **/
-        this.tfidf = tfidf;
-        /** @private **/
-        this.metric = metric;
+        this._name = name;
+        this._binary = binary;
+        this._occurrences = occurrences;
+        this._docId = docId;
+        this._tf = tf;
+        this._idf = idf;
+        this._tfidf = tfidf;
+        this._metric = metric;
     }
 
     /**
@@ -35,7 +27,7 @@ export default class Term {
      * @method
      */
     toString = () => {
-        return this.name;
+        return this._name;
     }
 
 
@@ -45,7 +37,7 @@ export default class Term {
      * @param value {number}
      */
     setIdf = (value) => {
-        this.idf = value;
+        this._idf = value;
     }
 
     /**
@@ -54,7 +46,7 @@ export default class Term {
      * @param value {number}
      */
     setTfIdf = (value) => {
-        this.tfidf = value;
+        this._tfidf = value;
     }
 
     /**
@@ -63,7 +55,7 @@ export default class Term {
      * @param value {number}
      */
     setMetric = (value) => {
-        this.metric = value;
+        this._metric = value;
     }
 
     /**
@@ -72,7 +64,7 @@ export default class Term {
      * @param value {number}
      */
     setBinary = (value) => {
-        this.binary = value;
+        this._binary = value;
     }
 
     /**
@@ -81,7 +73,7 @@ export default class Term {
      * @param value {number}
      */
     setOccurrences = (value) => {
-        this.occurrences = value;
+        this._occurrences = value;
     }
 
     /**
@@ -90,6 +82,70 @@ export default class Term {
      * @param value {number}
      */
     setTf = (value) => {
-        this.tf = value;
+        this._tf = value;
+    }
+
+    /**
+     *
+     * @returns {string}
+     */
+    get name() {
+        return this._name;
+    }
+
+    /**
+     *
+     * @returns {number}
+     */
+    get binary() {
+        return this._binary;
+    }
+
+    /**
+     *
+     * @returns {number}
+     */
+    get occurrences() {
+        return this._occurrences;
+    }
+
+    /**
+     *
+     * @returns {number}
+     */
+    get docId() {
+        return this._docId;
+    }
+
+    /**
+     *
+     * @returns {number}
+     */
+    get tf() {
+        return this._tf;
+    }
+
+    /**
+     *
+     * @returns {number}
+     */
+    get idf() {
+        return this.idf;
+    }
+
+    /**
+     *
+     * @returns {number}
+     */
+    get tfidf() {
+        return this._tfidf;
+    }
+
+    /**
+     *
+     * @returns {?number}
+     */
+    get metric() {
+        return this._metric;
     }
 }

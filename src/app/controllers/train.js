@@ -1,7 +1,19 @@
 import {train} from '../../dal/train.js';
+import {insert} from '../../dal/best_k_features.js';
 import preprocess from '../../preprocessing/index.js';
 import fs from 'fs';
-import {addUniqueTerms, binaryVector, tfVector, idfVector, tfidfVector, numberOfOccurrencesVector} from '../../features/bagOfWords.js';
+import {
+    addUniqueTerms,
+    binaryVector,
+    tfVector,
+    idfVector,
+    tfidfVector,
+    numberOfOccurrencesVector
+} from '../../features/bagOfWords.js';
+import {
+    selectKBest
+} from '../../features/featureSelection.js';
+
 
 /**
  *
@@ -50,7 +62,7 @@ class trainController {
         const terms = happyResults.map(happydoc => happydoc.n1.map(wordList => wordList.join(' '))).join(' ');
         //console.log(terms.split(','))
         let bagOfWordsN1 = this.processBagOfWords(happyUniqueUnigram, terms.split(','));
-
+        await insert(selectKBest(bagOfWordsN1, 10, 'occurrences'));
 
         const notHappyResults = notHappyDocs.map((doc) => {
             const n1 = preprocess(doc.description, 1);
@@ -65,22 +77,6 @@ class trainController {
             }
         })
 
-        /**
-        console.log("====================== Happy Results =====================");
-        fs.writeFile('results.txt', "====================== Happy Results =====================", 'UTF-8', () => {
-        });
-        this.printInConsole(happyResults);
-        this.saveInTxt(happyResults);
-        fs.appendFile('results.txt', "\n", 'UTF-8', () => {
-        });
-        console.log("\n");
-
-        console.log("====================== Not Happy Results =====================");
-        fs.appendFile('results.txt', "====================== Not Happy Results =====================", 'UTF-8', () => {
-        });
-        this.saveInTxt(notHappyResults);
-        this.printInConsole(notHappyResults); **/
-
         return res.json({happy: happyResults, notHappy: notHappyResults, bagOfWordsN1: bagOfWordsN1});
     }
 
@@ -94,50 +90,9 @@ class trainController {
         happyUniqueUnigram = binaryVector(happyUniqueUnigram, happyDocs);
         happyUniqueUnigram = numberOfOccurrencesVector(happyUniqueUnigram, happyDocs);
         happyUniqueUnigram = tfVector(happyUniqueUnigram, happyDocs);
-        happyUniqueUnigram = idfVector(happyUniqueUnigram, happyDocs.length,happyDocs);
+        happyUniqueUnigram = idfVector(happyUniqueUnigram, happyDocs.length, happyDocs);
         //happyUniqueUnigram = tfidfVector(happyUniqueUnigram, happyDocs);
         return happyUniqueUnigram;
-    }
-
-    /**
-     *
-     * @param {Array<processed>} list
-     */
-    printInConsole(list) {
-        list.forEach((doc) => {
-            console.log(`\nDocument nº: ${doc.id}`);
-            console.log(`N1 - stopWords: ${doc.n1}`);
-            console.log(`N1 - cleanedText: ${doc.n1}`);
-            console.log(`N1 - stemmedText: ${doc.n1}`);
-            console.log(`N1 - tokenization: ${doc.n1}`);
-            console.log(`=====================================`);
-            console.log(`N2 - stopWords: ${doc.n2}`);
-            console.log(`N2 - cleanedText: ${doc.n2}`);
-            console.log(`N2 - stemmedText: ${doc.n2}`);
-            console.log(`N2 - tokenization: ${doc.n2}`);
-            console.log("\n\n");
-        });
-    }
-
-    /**
-     *
-     * @param list
-     */
-    saveInTxt(list) {
-        list.forEach((doc) => {
-            let text = `\nDocument nº: ${doc.id}\n
-                        N1 - stopWords: ${doc.n1.stopWords}\n
-                        N1 - cleanedText: ${doc.n1.cleanedText}\n
-                        N1 - stemmedText: ${doc.n1.stemmedText}\n
-                        N1 - tokenization: ${doc.n1.tokenization}\n
-                        =====================================\n
-                        N2 - stopWords: ${doc.n2.stopWords}\n
-                        N2 - cleanedText: ${doc.n2.cleanedText}\n
-                        N2 - stemmedText: ${doc.n2.stemmedText}\n
-                        N2 - tokenization: ${doc.n2.tokenization}\n\n`;
-            fs.appendFile('results.txt', text, 'utf-8', () => {
-            });
-        });
     }
 }
 
