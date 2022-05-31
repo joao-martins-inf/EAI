@@ -14,6 +14,7 @@ import {
     selectKBest
 } from '../../features/featureSelection.js';
 
+export let classVector;
 
 /**
  *
@@ -22,6 +23,25 @@ class trainController {
     async index(req, res) {
         const docs = await train.getTrainingSet();
         return res.json(docs);
+    }
+
+    async preprocessing(req,res) {
+        const docs = await train.getTrainingSet();
+        const corpus = docs.map((doc) => doc.corpus_details[0]);
+
+        const happyDocs = corpus.filter((item) => {
+            return item.label === 'happy'
+        });
+
+        const happyResults = happyDocs.map((doc) => {
+            const n1 = preprocess(doc.description, 1);
+            return {
+                id: doc.id,
+                n1: n1,
+            }
+        });
+
+        return res.json(happyResults);
     }
 
     /**
@@ -77,7 +97,8 @@ class trainController {
             }
         })
 
-        return res.json({happy: happyResults, notHappy: notHappyResults, bagOfWordsN1: bagOfWordsN1});
+        classVector = {happy: happyResults, notHappy: notHappyResults, bagOfWordsN1: bagOfWordsN1}
+        return res.json(classVector);
     }
 
     /**
@@ -94,6 +115,8 @@ class trainController {
         //happyUniqueUnigram = tfidfVector(happyUniqueUnigram, happyDocs);
         return happyUniqueUnigram;
     }
+
+
 }
 
 export const TrainController = new trainController()
