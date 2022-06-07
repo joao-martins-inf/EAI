@@ -3,12 +3,7 @@ import {insert} from '../../dal/best_k_features.js';
 import preprocess from '../../preprocessing/index.js';
 import fs from 'fs';
 import {
-    addUniqueTerms,
-    binaryVector,
-    tfVector,
-    idfVector,
-    tfidfVector,
-    numberOfOccurrencesVector
+    addUniqueTerms, binaryVector, tfVector, idfVector, tfidfVector, numberOfOccurrencesVector
 } from '../../features/bagOfWords.js';
 import {
     selectKBest
@@ -25,7 +20,7 @@ class trainController {
         return res.json(docs);
     }
 
-    async preprocessing(req,res) {
+    async preprocessing(req, res) {
         const docs = await train.getTrainingSet();
         const corpus = docs.map((doc) => doc.corpus_details[0]);
 
@@ -36,8 +31,7 @@ class trainController {
         const happyResults = happyDocs.map((doc) => {
             const n1 = preprocess(doc.description, 1);
             return {
-                id: doc.id,
-                n1: n1,
+                id: doc.id, n1: n1,
             }
         });
 
@@ -54,12 +48,9 @@ class trainController {
         const docs = await train.getTrainingSet();
         const corpus = docs.map((doc) => doc.corpus_details[0]);
 
-        const happyDocs = corpus.filter((item) => {
-            return item.label === 'happy'
-        });
-        const notHappyDocs = corpus.filter((item) => {
-            return item.label === 'not happy'
-        });
+        const happyDocs = corpus.filter(item => item.label === 'happy');
+        const notHappyDocs = corpus.filter(item => item.label === 'not happy');
+
         let happyUniqueUnigram = [];
         let happyUniqueBigram = [];
         let notHappyUniqueUnigram = [];
@@ -73,14 +64,12 @@ class trainController {
 
 
             return {
-                id: doc.id,
-                n1: n1,
-                n2: n2
+                id: doc.id, n1: n1, n2: n2
             }
         });
 
-        const terms = happyResults.map(happydoc => happydoc.n1.map(wordList => wordList.join(' '))).join(' ');
-        //console.log(terms.split(','))
+        const terms = happyResults.map(happyDoc => happyDoc.n1.map(wordList => wordList.join(' '))).join(' ');
+
         let bagOfWordsN1 = this.processBagOfWords(happyUniqueUnigram, terms.split(','));
         await insert(selectKBest(bagOfWordsN1, 10, 'occurrences'));
 
@@ -91,9 +80,7 @@ class trainController {
             notHappyUniqueBigram = addUniqueTerms(notHappyUniqueBigram, n2, doc.id);
 
             return {
-                id: doc.id,
-                n1,
-                n2
+                id: doc.id, n1, n2
             }
         })
 

@@ -10,7 +10,7 @@ class corpusController {
     async indexById(req, res) {
         const {id} = req.params;
         const docs = await corpus.getDocumentsById(id);
-        return res.status(200).json(docs);
+        return docs.length > 0 ? res.status(200).json(docs) : res.status(404).json(docs);
     }
 }
 

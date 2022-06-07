@@ -21,7 +21,7 @@ routes.get('/preprocess', TrainController.preprocessing);
 routes.post('/clean', (req, res) => {
     const {text, number} = req.body;
     const result = cleanText(text, number);
-    return res.json(result);
+    return res.status(200).json(result);
 });
 
 export default routes;
