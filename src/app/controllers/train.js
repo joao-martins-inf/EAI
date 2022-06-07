@@ -65,7 +65,7 @@ class trainController {
         let notHappyUniqueUnigram = [];
         let notHappyUniqueBigram = [];
 
-        const happyResults = happyDocs.map((doc) => {
+        let happyResults = happyDocs.map((doc) => {
             const n1 = preprocess(doc.description, 1);
             const n2 = preprocess(doc.description, 2);
             happyUniqueUnigram = addUniqueTerms(happyUniqueUnigram, n1, doc.id);
@@ -74,15 +74,33 @@ class trainController {
 
             return {
                 id: doc.id,
-                n1: n1,
-                n2: n2
+                originalText: doc.description,
+                cleanText: n1.join(' '),
+                unigram: n1,
+                unigramSorted: [...n1].sort(),
+                bigram: n2
             }
         });
 
-        const terms = happyResults.map(happydoc => happydoc.n1.map(wordList => wordList.join(' '))).join(' ');
+        const termsN1 = happyResults.map(happydoc => happydoc.unigramSorted.map(word => word)).join(' ');
+        const termsN2 = happyResults.map(happydoc => happydoc.bigram.map(word => word)).join(' ');
         //console.log(terms.split(','))
-        let bagOfWordsN1 = this.processBagOfWords(happyUniqueUnigram, terms.split(','));
-        await insert(selectKBest(bagOfWordsN1, 10, 'occurrences'));
+        let bagOfWordsN1 = this.processBagOfWords(happyUniqueUnigram, termsN1.split(','));
+        let bagOfWordsN2 = this.processBagOfWords(happyUniqueBigram, termsN2.split(','));
+        //await insert(selectKBest(bagOfWordsN1, 10, 'occurrences'));
+
+        // complete object information after obtaining bag of words
+        happyResults = happyResults.map((doc) => {
+            return {
+                ...doc, 
+                tfUnigramVector: tfVector(bagOfWordsN1, doc.unigramSorted).map((term) => ({text: term.name, value: term.tf})),
+                tfBigramVector: tfVector(bagOfWordsN2, doc.bigram).map((term) => ({text: term.name, value: term.tf})),
+                occurencesUnigramVector: numberOfOccurrencesVector(bagOfWordsN1, doc.unigramSorted).map((term) => ({text: term.name, value: term.occurrences})),
+                occurencesBigramVector: numberOfOccurrencesVector(bagOfWordsN2, doc.bigram).map((term) => ({text: term.name, value: term.occurrences}))
+            }
+        });
+
+        console.log('asd', happyResults[0]);
 
         const notHappyResults = notHappyDocs.map((doc) => {
             const n1 = preprocess(doc.description, 1);
@@ -92,8 +110,11 @@ class trainController {
 
             return {
                 id: doc.id,
-                n1,
-                n2
+                originalText: doc.description,
+                cleanText: n1.join(' '),
+                unigram: n1,
+                unigramSorted: [...n1].sort(),
+                bigram: n2
             }
         })
 
