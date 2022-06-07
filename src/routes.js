@@ -1,5 +1,6 @@
 import express from 'express';
 import cleanText from './preprocessing/index.js';
+import {selectKBest} from './features/featureSelection.js';
 
 const Router = express.Router;
 
@@ -21,6 +22,13 @@ routes.get('/preprocess', TrainController.preprocessing);
 routes.post('/clean', (req, res) => {
     const {text, number} = req.body;
     const result = cleanText(text, number);
+    return res.json(result);
+});
+
+routes.post('/selectkbest', (req, res) => {
+    console.log(req.body);
+    const {terms, k, metric, useSum} = req.body;
+    const result = selectKBest(terms, k, metric, useSum);
     return res.json(result);
 });
 
