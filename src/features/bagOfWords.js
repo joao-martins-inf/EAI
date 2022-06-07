@@ -14,9 +14,9 @@ import Term from '../app/class/term.js'
  * @returns {Term[]} list of terms
  */
 export const addUniqueTerms = (arrTerms1, arrTerms2, docId) => {
-    arrTerms2.forEach(wordList => {
-        if (!arrTerms1.find(term => term.name === wordList.join(' ')))
-            arrTerms1.push(new Term(wordList.join(' '), 0, 0, docId));
+    arrTerms2.forEach(word => {
+        if (!arrTerms1.find(term => term.name === word))
+            arrTerms1.push(new Term(word, 0, 0, docId));
     })
     return arrTerms1;
 }

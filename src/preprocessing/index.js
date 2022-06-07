@@ -13,12 +13,12 @@ import {stemmerWithSplit} from './stemming.js';
  * @returns {string[][]}
  */
 const index = (text, number) => {
-    //remove stopWords
-    const stopWordsRemoved = removeStopwords(text.split(' '));
     //clean text
-    const cleanedText = clean(stopWordsRemoved.join(' '));
+    const cleanedText = clean(text);
+    //remove stopWords
+    const stopWordsRemoved = removeStopwords(cleanedText.split(' '));
     //apply stemming
-    const stemmedText = stemmerWithSplit(cleanedText);
+    const stemmedText = stemmerWithSplit(stopWordsRemoved.join(' '));
     //split by tokens
     return tokenization(stemmedText, number);
 };
