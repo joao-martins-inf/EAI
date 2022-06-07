@@ -148,4 +148,18 @@ export default class Term {
     get metric() {
         return this._metric;
     }
+
+    showTf = () => {
+       return {
+           text: this._name,
+           value: this._tf
+       }
+    }
+
+    showOcc = () => {
+        return {
+            text: this._name,
+            value: this._occurrences
+        }
+    }
 }

@@ -27,9 +27,13 @@ export function characters(text) {
  * @returns {number} number of occurrences of a term in a text
  */
 export function numberOfOccurrences(term, text) {
+    if(term.split(' ').length > 1) {
+        return text.split(term).length -1;
+    }
     return text.split(' ').reduce((total, item) => {
         return item === term ? total + 1 : total;
     }, 0);
+
 }
 
 /**
@@ -50,7 +54,7 @@ export function exists(term, text) {
  */
 export function tf(term, text) {
     //TODO não está preparado para bigramas PROBLEM: words
-    return numberOfOccurrences(term, text) / words(text);
+    return term.split(' ').length > 1 ? (numberOfOccurrences(term, text) / words(text)) * 2: numberOfOccurrences(term, text) / words(text);
 }
 
 /**

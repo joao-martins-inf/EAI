@@ -18,7 +18,7 @@ export const addUniqueTerms = (arrTerms1, arrTerms2, docId) => {
         if (!arrTerms1.find(term => term.name === word))
             arrTerms1.push(new Term(word, 0, 0, docId));
     })
-    return arrTerms1;
+    return arrTerms1.sort((itemA, itemB) => itemA.name > itemB.name ? 1 : -1);
 }
 
 /**

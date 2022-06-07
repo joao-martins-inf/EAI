@@ -72,26 +72,22 @@ class trainController {
                 bigram: n2
             }
         });
-
-        const termsN1 = happyResults.map(happydoc => happydoc.unigramSorted.map(word => word)).join(' ');
-        const termsN2 = happyResults.map(happydoc => happydoc.bigram.map(word => word)).join(' ');
         //console.log(terms.split(','))
-        let bagOfWordsN1 = this.processBagOfWords(happyUniqueUnigram, termsN1.split(','));
-        let bagOfWordsN2 = this.processBagOfWords(happyUniqueBigram, termsN2.split(','));
+
         //await insert(selectKBest(bagOfWordsN1, 10, 'occurrences'));
 
         // complete object information after obtaining bag of words
         happyResults = happyResults.map((doc) => {
+            let bagOfWordsN1 = this.processBagOfWords(happyUniqueUnigram, doc.unigramSorted);
+            let bagOfWordsN2 = this.processBagOfWords(happyUniqueBigram, doc.bigram);
             return {
                 ...doc, 
-                tfUnigramVector: tfVector(bagOfWordsN1, doc.unigramSorted).map((term) => ({text: term.name, value: term.tf})),
-                tfBigramVector: tfVector(bagOfWordsN2, doc.bigram).map((term) => ({text: term.name, value: term.tf})),
-                occurencesUnigramVector: numberOfOccurrencesVector(bagOfWordsN1, doc.unigramSorted).map((term) => ({text: term.name, value: term.occurrences})),
-                occurencesBigramVector: numberOfOccurrencesVector(bagOfWordsN2, doc.bigram).map((term) => ({text: term.name, value: term.occurrences}))
+                tfUnigramVector: bagOfWordsN1.filter(term => term.tf > 0).map(term => term.showTf()),
+                tfBigramVector: bagOfWordsN2.filter(term => term.tf > 0).map(term => term.showTf()),
+                occurrencesUnigramVector: bagOfWordsN1.filter(term => term.occurrences > 0).map(term => term.showOcc()),
+                occurrencesBigramVector: bagOfWordsN2.filter(term => term.occurrences > 0).map(term => term.showOcc())
             }
         });
-
-        console.log('asd', happyResults[0]);
 
         const notHappyResults = notHappyDocs.map((doc) => {
             const n1 = preprocess(doc.description, 1);
@@ -109,7 +105,7 @@ class trainController {
             }
         })
 
-        classVector = {happy: happyResults, notHappy: notHappyResults, bagOfWordsN1: bagOfWordsN1}
+        classVector = {happy: happyResults[0], notHappy: notHappyResults[0]}
         return res.json(classVector);
     }
 
