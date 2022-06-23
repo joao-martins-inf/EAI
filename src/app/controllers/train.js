@@ -1,5 +1,5 @@
 import {train} from '../../dal/train.js';
-import {insert} from '../../dal/best_k_features.js';
+import {insert, getAll} from '../../dal/best_k_features.js';
 import preprocess from '../../preprocessing/index.js';
 import fs from 'fs';
 import {
@@ -8,6 +8,7 @@ import {
 import {
     selectKBest
 } from '../../features/featureSelection.js';
+import Term from '../class/term.js';
 
 export let classVector;
 
@@ -124,7 +125,80 @@ class trainController {
         return happyUniqueUnigram;
     }
 
+    classVectors = () => {
+        let bestKFeatures = await getAll();
+        const happy = [];
+        const notHappy = [];
 
-}
+        bestKFeatures.map(e => {
+            const term = new Term(e.name, e.binay, e.occurences, e.docId, e.tf, e.idf, e.tfidf, metric);
+            if(e.label === 'happy'){
+                // TODO nao temos e.ngram nem e.type
+                if(e.ngram === 1){
+                    if(e.type === 'avg'){
+                        happy.termsAvgMetric.push(term)
+                    }
+                    else if(e.type === 'sum') {
+                        happy.termsSumMetric.push(term)
+                    }
+                }
+                else if(e.ngram === 2) {
+                    if(e.type === 'avg'){
+                        happy.bigramsTermsAvgMetric.push(term)
+                    }
+                    else if(e.type === 'sum') {
+                        happy.bigramsTermsSumMetric.push(term)
+                    }
+                }
+            }else {
+                if(e.ngram === 1){
+                    if(e.type === 'avg'){
+                        notHappy.termsAvgMetric.push(term)
+                    }
+                    else if(e.type === 'sum') {
+                        notHappy.termsSumMetric.push(term)
+                    }
+                }
+                else if(e.ngram === 2) {
+                    if(e.type === 'avg'){
+                        notHappy.bigramsTermsAvgMetric.push(term)
+                    }
+                    else if(e.type === 'sum') {
+                        notHappy.bigramsTermsSumMetric.push(term)
+                    }
+                }
+            }
+        })
+
+        const result = {
+            happy: {
+                // TODO nao temos e.metric
+                termsSumMetrics: formatByMetrics ? splitByMetrics(happyResults.termsSumMetrics) : [],
+                termsAvgMetric: formatByMetrics ? splitByMetrics(happyResults.termsAvgMetrics) : [],
+                bigramsTermsSumMetrics: formatByMetrics ? splitByMetrics(happyResults.bigramsTermsSumMetrics) : [],
+                bigramsTermsAvgMetrics: formatByMetrics ? splitByMetrics(happyResults.bigramsTermsAvgMetrics) : []
+            },
+            notHappy: {
+                termsSumMetrics: formatByMetrics ? splitByMetrics(happyResults.termsSumMetrics) : [],
+                termsAvgMetric: formatByMetrics ? splitByMetrics(happyResults.termsAvgMetrics) : [],
+                bigramsTermsSumMetrics: formatByMetrics ? splitByMetrics(happyResults.bigramsTermsSumMetrics) : [],
+                bigramsTermsAvgMetrics: formatByMetrics ? splitByMetrics(happyResults.bigramsTermsAvgMetrics) : []
+            }
+        }
+        
+        return {
+            happy: {
+                bagOfWords: result.happy.termsAvgMetric.tfidf.map(e => e.name),
+                idf: result.happy.termsAvgMetric.tfidf.map(e => e.idf),
+                tfidf: resresult.happy.termsAvgMetric.tfidf.map(e => e.tfidf)
+            },
+            notHappy: {
+                bagOfWords: result.notHappy.termsAvgMetric.tfidf.map(e => e.name),
+                idf: result.notHappy.termsAvgMetric.tfidf.map(e => e.idf),
+                tfidf: resresult.notHappy.termsAvgMetric.tfidf.map(e => e.tfidf)
+            }
+        }
+    }
+}   
 
 export const TrainController = new trainController()

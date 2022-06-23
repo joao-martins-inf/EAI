@@ -1,4 +1,12 @@
 import preprocess from '../preprocessing/index.js';
+import {calculateProbability} from './bayes.js';
+import {addUniqueTerms, tfVector} from '../features/bagOfWords.js'
+
+const getTfVector = (label, classVectors) => {
+    if(label === 'happy') {
+
+    }
+}
 
 /**
  *
@@ -7,7 +15,10 @@ import preprocess from '../preprocessing/index.js';
  */
 export const cosineSimilarity = (text, classVectors) => {
     let bagOfWords = preprocess(text, 1);
+    const uniqueTerms = [];
+    addUniqueTerms(uniqueTerms, cleanedText, 0);
 
+    
     /**
      * TODO
      * calculate tfidf from bagOfWords
@@ -31,5 +42,15 @@ const calculateCosineSimilarity = (vector1, vector2) => {
     }
     mV1 = Math.sqrt(mV1);
     mV2 = Math.sqrt(mV2);
-    return (dotProduct) / (mV1) * (mV2)
+    return (dotProduct) / (mV1) * (mV2);
+}
+
+export const classify = (text) => {
+   const cleanedText = preprocess(text, 1);
+   const happyProbability = calculateProbability('happy');
+   const notHappyProbability = calculateProbability('not happy');
+   const uniqueTerms = [];
+   addUniqueTerms(uniqueTerms, cleanedText, 0);
+
+    const happyTfVector = tfVector()
 }
