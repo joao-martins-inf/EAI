@@ -19,7 +19,7 @@ export const cosineSimilarity = (text) => {
     const happySimilarity = calculateCosineSimilarity(tfidfHappy, tfiIdfVector);
     const notHappySimilarity = calculateCosineSimilarity(tfidfNotHappy, tfiIdfVector);
 
-    let prediction =happySimilarity > notHappySimilarity ? "happy" : "not happy";
+    let prediction = happySimilarity > notHappySimilarity ? "happy" : "not happy";
 
     return {happySimilarity: happySimilarity, notHappySimilarity: notHappySimilarity, prediction: prediction};
 }
@@ -69,12 +69,21 @@ const calculateCosineSimilarity = (vector1, vector2) => {
     return (dotProduct) / (mV1) * (mV2);
 }
 
-export const classify = (text) => {
-    const cleanedText = preprocess(text, 1);
-    const happyProbability = calculateProbability('happy');
-    const notHappyProbability = calculateProbability('not happy');
-    const uniqueTerms = [];
-    addUniqueTerms(uniqueTerms, cleanedText, 0);
+export const classify = async (text) => {
+    let cleanText = preprocess(text, 1);
+    let uniqueTerms = addUniqueTerms([], cleanText);
+    const unigrams = classVector.happy.unigram.flat(1);
+    const bagOfWords = addUniqueTerms(unigrams, cleanText);
 
-    const happyTfVector = tfVector()
+    uniqueTerms = tfVector(bagOfWords, [...cleanText]);
+    const happyProbability = await calculateProbability('happy');
+    const notHappyProbability = await calculateProbability('not happy');
+    const termProbability = uniqueTerms.map((term) => term.tf / uniqueTerms.length)
+
+    const happySimilarity = termProbability.reduce((a, b) => a * b) * happyProbability;
+    const notHappySimilarity = termProbability.reduce((a, b) => a * b) * notHappyProbability;
+
+    let prediction = happySimilarity > notHappySimilarity ? "happy" : "not happy";
+
+    return {happySimilarity: happySimilarity, notHappySimilarity: notHappySimilarity, prediction};
 }

@@ -1,7 +1,7 @@
 import express from 'express';
 import cleanText from './preprocessing/index.js';
 import {selectKBest} from './features/featureSelection.js';
-import {cosineSimilarity} from './classifier/classifier.js';
+import {classify} from './classifier/classifier.js';
 
 const Router = express.Router;
 
@@ -33,8 +33,9 @@ routes.post('/selectkbest', (req, res) => {
     return res.json(result);
 });
 
-routes.get('/teste', (req, res)=> {
-    return res.json(cosineSimilarity('we paid well over the odds for this hotel but found it a greation location, only across the road from Macy\'s. Well worth a stay but keep looking as the price keeps going up and down.'));
+routes.get('/teste', async (req, res)=> {
+    const result = await classify('we paid well over the odds for this hotel but found it a greation location, only across the road from Macy\'s. Well worth a stay but keep looking as the price keeps going up and down.');
+    return res.json(result);
 })
 
 export default routes;

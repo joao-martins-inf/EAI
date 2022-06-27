@@ -1,18 +1,18 @@
 import {train} from '../dal/train.js';
 
-const getTrainingSetByClass = async (label = null) => {
-    const trainingSet = await train.getTrainingSet();
-
+const getTrainingSetByClass = (trainingSet, label = null) => {
     if(label === null){
         return trainingSet;
     }
 
-    return trainingSet.filter((c) => c.corpus_detail[0].label === label);
+    return trainingSet.filter((c) => c.corpus_details[0].label === label);
 
 }
 
 export const calculateProbability = async (label) => {
     const trainingSet = await train.getTrainingSet();
+    const a = getTrainingSetByClass(trainingSet, label).length;
+    const b = trainingSet.length;
 
-    return getTrainingSetByClass(label).length / trainingSet.length;
+    return a / b;
 }
