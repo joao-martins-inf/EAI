@@ -1,6 +1,7 @@
 import express from 'express';
 import cleanText from './preprocessing/index.js';
 import {selectKBest} from './features/featureSelection.js';
+import {cosineSimilarity} from './classifier/classifier.js';
 
 const Router = express.Router;
 
@@ -31,5 +32,9 @@ routes.post('/selectkbest', (req, res) => {
     const result = selectKBest(terms, k, metric, useSum);
     return res.json(result);
 });
+
+routes.get('/teste', (req, res)=> {
+    return res.json(cosineSimilarity(''));
+})
 
 export default routes;

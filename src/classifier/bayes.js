@@ -1,7 +1,6 @@
 import {train} from '../dal/train.js';
-import {calculateProbability} from './bayes.js';
 
-const getTrainingSetByClass = (label = null) => {
+const getTrainingSetByClass = async (label = null) => {
     const trainingSet = await train.getTrainingSet();
 
     if(label === null){
@@ -12,7 +11,7 @@ const getTrainingSetByClass = (label = null) => {
 
 }
 
-export const calculateProbability = (label) => {
+export const calculateProbability = async (label) => {
     const trainingSet = await train.getTrainingSet();
 
     return getTrainingSetByClass(label).length / trainingSet.length;

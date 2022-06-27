@@ -77,10 +77,25 @@ class trainController {
 
         //await insert(selectKBest(bagOfWordsN1, 10, 'occurrences'));
 
+        classVector = {
+            happy: {
+                unigram: [], 
+                bigram: []
+            }, 
+            notHappy: {
+                unigram: [], 
+                bigram: []
+            }
+        };
+
         // complete object information after obtaining bag of words
         happyResults = happyResults.map((doc) => {
             let bagOfWordsN1 = this.processBagOfWords(happyUniqueUnigram, doc.unigramSorted);
             let bagOfWordsN2 = this.processBagOfWords(happyUniqueBigram, doc.bigram);
+
+            classVector['happy'].unigram.push(bagOfWordsN1);
+            classVector['happy'].bigram.push(bagOfWordsN2);
+
             return {
                 ...doc, 
                 tfUnigramVector: bagOfWordsN1.filter(term => term.tf > 0).map(term => term.showTf()),
@@ -90,7 +105,7 @@ class trainController {
             }
         });
 
-        const notHappyResults = notHappyDocs.map((doc) => {
+        let notHappyResults = notHappyDocs.map((doc) => {
             const n1 = preprocess(doc.description, 1);
             const n2 = preprocess(doc.description, 2);
             notHappyUniqueUnigram = addUniqueTerms(notHappyUniqueUnigram, n1, doc.id);
@@ -106,8 +121,25 @@ class trainController {
             }
         })
 
-        classVector = {happy: happyResults[0], notHappy: notHappyResults[0]}
-        return res.json(classVector);
+        notHappyResults = notHappyResults.map((doc) => {
+            let bagOfWordsN1 = this.processBagOfWords(notHappyUniqueUnigram, doc.unigramSorted);
+            let bagOfWordsN2 = this.processBagOfWords(notHappyUniqueBigram, doc.bigram);
+
+            classVector['notHappy'].unigram.push(bagOfWordsN1);
+            classVector['notHappy'].bigram.push(bagOfWordsN2);
+
+            return {
+                ...doc, 
+                tfUnigramVector: bagOfWordsN1.filter(term => term.tf > 0).map(term => term.showTf()),
+                tfBigramVector: bagOfWordsN2.filter(term => term.tf > 0).map(term => term.showTf()),
+                occurrencesUnigramVector: bagOfWordsN1.filter(term => term.occurrences > 0).map(term => term.showOcc()),
+                occurrencesBigramVector: bagOfWordsN2.filter(term => term.occurrences > 0).map(term => term.showOcc())
+            }
+        });
+
+        //classVector = {happy: happyResults[0], notHappy: notHappyResults[0]}
+        //return res.json(classVector);
+        return res.json({});
     }
 
     /**
@@ -125,7 +157,7 @@ class trainController {
         return happyUniqueUnigram;
     }
 
-    classVectors = () => {
+    classVectors = async () => {
         let bestKFeatures = await getAll();
         const happy = [];
         const notHappy = [];

@@ -1,29 +1,28 @@
 import preprocess from '../preprocessing/index.js';
 import {calculateProbability} from './bayes.js';
 import {addUniqueTerms, tfVector} from '../features/bagOfWords.js'
-
-const getTfVector = (label, classVectors) => {
-    if(label === 'happy') {
-
-    }
-}
+import { classVector } from '../app/controllers/train.js';
 
 /**
  *
  * @param {string} text
- * @param classVectors
  */
-export const cosineSimilarity = (text, classVectors) => {
-    let bagOfWords = preprocess(text, 1);
-    const uniqueTerms = [];
-    addUniqueTerms(uniqueTerms, cleanedText, 0);
+export const cosineSimilarity = (text) => {
+    //let bagOfWords = preprocess(text, 1);
+   // const uniqueTerms = [];
+    //addUniqueTerms(uniqueTerms, cleanedText, 0);
 
-    
     /**
      * TODO
      * calculate tfidf from bagOfWords
      * use calculateCosineSimilarity for both classes
      */
+    console.log(classVector.happy.unigram[1])
+
+    //const happySimilarity = calculateCosineSimilarity();
+    //const notHappySimilarity = calculateCosineSimilarity();
+
+    return classVector.happy.unigram[10];
 }
 
 /**

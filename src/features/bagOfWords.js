@@ -74,7 +74,7 @@ export const tfVector = (bagOfWordsArr, termsArr) => {
  * @returns {Term[]}
  */
 export const idfVector = (bagOfWords, nDocs, termsArr) => {
-    //TODO já voltamos
+    
     bagOfWords.forEach(term => {
         term.setIdf(idf(nDocs,term.occurrences))
     });
@@ -88,12 +88,14 @@ export const idfVector = (bagOfWords, nDocs, termsArr) => {
  * @returns {Term[]}
  */
 export const tfidfVector = (bagOfWordsArr, termsArr) => {
-    const tfVector = tfVector(bagOfWordsArr, termsArr);
-    const idfVector = idfVector(bagOfWordsArr, termsArr);
+    const tfVectorResult = tfVector(bagOfWordsArr, termsArr);
+    const idfVectorResult = idfVector(bagOfWordsArr, termsArr);
 
-    return termsArr.map((x, i) => {
-        return tfidf(tfVector[i], idfVector[i])
+    bagOfWordsArr.map((term, i) => {
+        term.setTfIdf(tfidf(tfVectorResult[i], idfVectorResult[i]))
     });
+
+    return bagOfWordsArr;
 }
 
 export const sumVector = (termsArr) => {
