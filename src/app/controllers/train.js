@@ -73,9 +73,6 @@ class trainController {
                 bigram: n2
             }
         });
-        //console.log(terms.split(','))
-
-        //await insert(selectKBest(bagOfWordsN1, 10, 'occurrences'));
 
         classVector = {
             happy: {
