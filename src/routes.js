@@ -34,7 +34,7 @@ routes.post('/selectkbest', (req, res) => {
 });
 
 routes.get('/teste', (req, res)=> {
-    return res.json(cosineSimilarity(''));
+    return res.json(cosineSimilarity('we paid well over the odds for this hotel but found it a greation location, only across the road from Macy\'s. Well worth a stay but keep looking as the price keeps going up and down.'));
 })
 
 export default routes;

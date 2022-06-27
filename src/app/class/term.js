@@ -130,7 +130,7 @@ export default class Term {
      * @returns {number}
      */
     get idf() {
-        return this.idf;
+        return this._idf;
     }
 
     /**

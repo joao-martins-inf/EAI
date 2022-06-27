@@ -10,7 +10,17 @@ import {
 } from '../../features/featureSelection.js';
 import Term from '../class/term.js';
 
-export let classVector;
+export let classVector = {
+    happy: {
+        unigram: [],
+        bigram: []
+    },
+    notHappy: {
+        unigram: [],
+        bigram: []
+    }
+};
+;
 
 /**
  *
@@ -74,27 +84,16 @@ class trainController {
             }
         });
 
-        classVector = {
-            happy: {
-                unigram: [], 
-                bigram: []
-            }, 
-            notHappy: {
-                unigram: [], 
-                bigram: []
-            }
-        };
-
         // complete object information after obtaining bag of words
-        happyResults = happyResults.map((doc) => {
-            let bagOfWordsN1 = this.processBagOfWords(happyUniqueUnigram, doc.unigramSorted);
-            let bagOfWordsN2 = this.processBagOfWords(happyUniqueBigram, doc.bigram);
+        happyResults = happyResults.map(async (doc) => {
+            let bagOfWordsN1 = await this.processBagOfWords(happyUniqueUnigram, doc.unigramSorted);
+            let bagOfWordsN2 = await this.processBagOfWords(happyUniqueBigram, doc.bigram);
 
-            classVector['happy'].unigram.push(bagOfWordsN1);
-            classVector['happy'].bigram.push(bagOfWordsN2);
+            classVector['happy'].unigram.push(bagOfWordsN1.filter(term => term.occurrences > 0));
+            classVector['happy'].bigram.push(bagOfWordsN2.filter(term => term.occurrences > 0));
 
             return {
-                ...doc, 
+                ...doc,
                 tfUnigramVector: bagOfWordsN1.filter(term => term.tf > 0).map(term => term.showTf()),
                 tfBigramVector: bagOfWordsN2.filter(term => term.tf > 0).map(term => term.showTf()),
                 occurrencesUnigramVector: bagOfWordsN1.filter(term => term.occurrences > 0).map(term => term.showOcc()),
@@ -118,15 +117,15 @@ class trainController {
             }
         })
 
-        notHappyResults = notHappyResults.map((doc) => {
-            let bagOfWordsN1 = this.processBagOfWords(notHappyUniqueUnigram, doc.unigramSorted);
-            let bagOfWordsN2 = this.processBagOfWords(notHappyUniqueBigram, doc.bigram);
+        notHappyResults = notHappyResults.map(async (doc) => {
+            let bagOfWordsN1 = await this.processBagOfWords(notHappyUniqueUnigram, doc.unigramSorted);
+            let bagOfWordsN2 = await this.processBagOfWords(notHappyUniqueBigram, doc.bigram);
 
-            classVector['notHappy'].unigram.push(bagOfWordsN1);
-            classVector['notHappy'].bigram.push(bagOfWordsN2);
+            classVector['notHappy'].unigram.push(bagOfWordsN1.filter(term => term.occurrences > 0));
+            classVector['notHappy'].bigram.push(bagOfWordsN2.filter(term => term.occurrences > 0));
 
             return {
-                ...doc, 
+                ...doc,
                 tfUnigramVector: bagOfWordsN1.filter(term => term.tf > 0).map(term => term.showTf()),
                 tfBigramVector: bagOfWordsN2.filter(term => term.tf > 0).map(term => term.showTf()),
                 occurrencesUnigramVector: bagOfWordsN1.filter(term => term.occurrences > 0).map(term => term.showOcc()),
@@ -143,15 +142,15 @@ class trainController {
      *
      * @param happyUniqueUnigram {Term[]}
      * @param happyDocs {string[]}
-     * @returns {Term[]}
+     * @returns {Promise<Term[]>}
      */
-    processBagOfWords = (happyUniqueUnigram, happyDocs) => {
+    processBagOfWords = async (happyUniqueUnigram, happyDocs) => {
         happyUniqueUnigram = binaryVector(happyUniqueUnigram, happyDocs);
         happyUniqueUnigram = numberOfOccurrencesVector(happyUniqueUnigram, happyDocs);
         happyUniqueUnigram = tfVector(happyUniqueUnigram, happyDocs);
         happyUniqueUnigram = idfVector(happyUniqueUnigram, happyDocs.length, happyDocs);
-        //happyUniqueUnigram = tfidfVector(happyUniqueUnigram, happyDocs);
-        return happyUniqueUnigram;
+        happyUniqueUnigram = tfidfVector(happyUniqueUnigram, happyDocs);
+        return Promise.resolve(happyUniqueUnigram);
     }
 
     classVectors = async () => {
@@ -161,38 +160,32 @@ class trainController {
 
         bestKFeatures.map(e => {
             const term = new Term(e.name, e.binay, e.occurences, e.docId, e.tf, e.idf, e.tfidf, metric);
-            if(e.label === 'happy'){
+            if (e.label === 'happy') {
                 // TODO nao temos e.ngram nem e.type
-                if(e.ngram === 1){
-                    if(e.type === 'avg'){
+                if (e.ngram === 1) {
+                    if (e.type === 'avg') {
                         happy.termsAvgMetric.push(term)
-                    }
-                    else if(e.type === 'sum') {
+                    } else if (e.type === 'sum') {
                         happy.termsSumMetric.push(term)
                     }
-                }
-                else if(e.ngram === 2) {
-                    if(e.type === 'avg'){
+                } else if (e.ngram === 2) {
+                    if (e.type === 'avg') {
                         happy.bigramsTermsAvgMetric.push(term)
-                    }
-                    else if(e.type === 'sum') {
+                    } else if (e.type === 'sum') {
                         happy.bigramsTermsSumMetric.push(term)
                     }
                 }
-            }else {
-                if(e.ngram === 1){
-                    if(e.type === 'avg'){
+            } else {
+                if (e.ngram === 1) {
+                    if (e.type === 'avg') {
                         notHappy.termsAvgMetric.push(term)
-                    }
-                    else if(e.type === 'sum') {
+                    } else if (e.type === 'sum') {
                         notHappy.termsSumMetric.push(term)
                     }
-                }
-                else if(e.ngram === 2) {
-                    if(e.type === 'avg'){
+                } else if (e.ngram === 2) {
+                    if (e.type === 'avg') {
                         notHappy.bigramsTermsAvgMetric.push(term)
-                    }
-                    else if(e.type === 'sum') {
+                    } else if (e.type === 'sum') {
                         notHappy.bigramsTermsSumMetric.push(term)
                     }
                 }
@@ -214,7 +207,7 @@ class trainController {
                 bigramsTermsAvgMetrics: formatByMetrics ? splitByMetrics(happyResults.bigramsTermsAvgMetrics) : []
             }
         }
-        
+
         return {
             happy: {
                 bagOfWords: result.happy.termsAvgMetric.tfidf.map(e => e.name),
@@ -228,6 +221,6 @@ class trainController {
             }
         }
     }
-}   
+}
 
 export const TrainController = new trainController()

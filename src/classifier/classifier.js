@@ -1,28 +1,53 @@
 import preprocess from '../preprocessing/index.js';
 import {calculateProbability} from './bayes.js';
 import {addUniqueTerms, tfVector} from '../features/bagOfWords.js'
-import { classVector } from '../app/controllers/train.js';
+import {classVector} from '../app/controllers/train.js';
 
 /**
  *
  * @param {string} text
  */
 export const cosineSimilarity = (text) => {
-    //let bagOfWords = preprocess(text, 1);
-   // const uniqueTerms = [];
-    //addUniqueTerms(uniqueTerms, cleanedText, 0);
+    let cleanText = preprocess(text, 1);
+    let uniqueTerms = addUniqueTerms([], cleanText);
 
-    /**
-     * TODO
-     * calculate tfidf from bagOfWords
-     * use calculateCosineSimilarity for both classes
-     */
-    console.log(classVector.happy.unigram[1])
+    uniqueTerms = tfVector(uniqueTerms, [...cleanText]);
+    let tfidfHappy = getTfidf("happy", "unigram");
+    let tfidfNotHappy = getTfidf("notHappy", "unigram");
+    let tfiIdfVector = getTfIdfVector("happy", "unigram", uniqueTerms).map(item => item.tfidf);
 
-    //const happySimilarity = calculateCosineSimilarity();
-    //const notHappySimilarity = calculateCosineSimilarity();
+    const happySimilarity = calculateCosineSimilarity(tfidfHappy, tfiIdfVector);
+    const notHappySimilarity = calculateCosineSimilarity(tfidfNotHappy, tfiIdfVector);
 
-    return classVector.happy.unigram[10];
+    let prediction =happySimilarity > notHappySimilarity ? "happy" : "not happy";
+
+    return {happySimilarity: happySimilarity, notHappySimilarity: notHappySimilarity, prediction: prediction};
+}
+
+const getTfIdfVector = (classType, nGram, uniqueTerms) => {
+    let res = [];
+    for (let i = 0; i < classVector[classType][nGram].length; i++) {
+        for (let j = 0; j < classVector[classType][nGram][i].length; j++) {
+            let term = classVector[classType][nGram][i][j];
+            for (let k = 0; k < uniqueTerms.length; k++) {
+                let termToPredict = uniqueTerms[k];
+                termToPredict.setTfIdf(term.idf * termToPredict.tf)
+                res.push(termToPredict);
+            }
+        }
+    }
+    return res;
+}
+
+const getTfidf = (classType, nGram) => {
+    let res = [];
+    for (let i = 0; i < classVector[classType][nGram].length; i++) {
+        for (let j = 0; j < classVector[classType][nGram][i].length; j++) {
+            let term = classVector[classType][nGram][i][j];
+            res.push(term.tfidf)
+        }
+    }
+    return res;
 }
 
 /**
@@ -45,11 +70,11 @@ const calculateCosineSimilarity = (vector1, vector2) => {
 }
 
 export const classify = (text) => {
-   const cleanedText = preprocess(text, 1);
-   const happyProbability = calculateProbability('happy');
-   const notHappyProbability = calculateProbability('not happy');
-   const uniqueTerms = [];
-   addUniqueTerms(uniqueTerms, cleanedText, 0);
+    const cleanedText = preprocess(text, 1);
+    const happyProbability = calculateProbability('happy');
+    const notHappyProbability = calculateProbability('not happy');
+    const uniqueTerms = [];
+    addUniqueTerms(uniqueTerms, cleanedText, 0);
 
     const happyTfVector = tfVector()
 }

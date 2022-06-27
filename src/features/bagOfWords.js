@@ -13,7 +13,7 @@ import Term from '../app/class/term.js'
  * @param {number} docId document id
  * @returns {Term[]} list of terms
  */
-export const addUniqueTerms = (arrTerms1, arrTerms2, docId) => {
+export const addUniqueTerms = (arrTerms1, arrTerms2, docId= 0) => {
     arrTerms2.forEach(word => {
         if (!arrTerms1.find(term => term.name === word))
             arrTerms1.push(new Term(word, 0, 0, docId));
@@ -88,11 +88,10 @@ export const idfVector = (bagOfWords, nDocs, termsArr) => {
  * @returns {Term[]}
  */
 export const tfidfVector = (bagOfWordsArr, termsArr) => {
-    const tfVectorResult = tfVector(bagOfWordsArr, termsArr);
-    const idfVectorResult = idfVector(bagOfWordsArr, termsArr);
-
     bagOfWordsArr.map((term, i) => {
-        term.setTfIdf(tfidf(tfVectorResult[i], idfVectorResult[i]))
+        let tf = term.tf;
+        let idf = term.idf;
+        term.setTfIdf(tfidf(tf, idf));
     });
 
     return bagOfWordsArr;
