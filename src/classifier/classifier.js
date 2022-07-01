@@ -12,16 +12,18 @@ export const cosineSimilarity = (text) => {
     let uniqueTerms = addUniqueTerms([], cleanText);
 
     uniqueTerms = tfVector(uniqueTerms, [...cleanText]);
-    let tfidfHappy = getTfidf("happy", "unigram");
-    let tfidfNotHappy = getTfidf("notHappy", "unigram");
-    let tfiIdfVector = getTfIdfVector("happy", "unigram", uniqueTerms).map(item => item.tfidf);
+    let tfidfPositive = getTfidf("positive", "unigram");
+    let tfidfNegative = getTfidf("negative", "unigram");
+    let tfIdfVector = getTfIdfVector("negative", "unigram", uniqueTerms).map(item => item.tfidf);
 
-    const happySimilarity = calculateCosineSimilarity(tfidfHappy, tfiIdfVector);
-    const notHappySimilarity = calculateCosineSimilarity(tfidfNotHappy, tfiIdfVector);
+    const positiveSimilarity = calculateCosineSimilarity(tfidfPositive, tfIdfVector);
+    
+    tfIdfVector = getTfIdfVector("positive", "unigram", uniqueTerms).map(item => item.tfidf);
+    const negativeSimilarity = calculateCosineSimilarity(tfidfNegative, tfIdfVector);
+    
+    const prediction = positiveSimilarity > negativeSimilarity ? "positive" : "negative";
 
-    let prediction = happySimilarity > notHappySimilarity ? "happy" : "not happy";
-
-    return {happySimilarity: happySimilarity, notHappySimilarity: notHappySimilarity, prediction: prediction};
+    return {positiveSimilarity, negativeSimilarity, prediction};
 }
 
 const getTfIdfVector = (classType, nGram, uniqueTerms) => {
@@ -72,18 +74,18 @@ const calculateCosineSimilarity = (vector1, vector2) => {
 export const classify = async (text) => {
     let cleanText = preprocess(text, 1);
     let uniqueTerms = addUniqueTerms([], cleanText);
-    const unigrams = classVector.happy.unigram.flat(1);
+    const unigrams = classVector.positive.unigram.flat(1);
     const bagOfWords = addUniqueTerms(unigrams, cleanText);
 
     uniqueTerms = tfVector(bagOfWords, [...cleanText]);
-    const happyProbability = await calculateProbability('happy');
-    const notHappyProbability = await calculateProbability('not happy');
+    const positiveProbability = await calculateProbability('positive');
+    const negativeProbability = await calculateProbability('negative');
     const termProbability = uniqueTerms.map((term) => term.tf / uniqueTerms.length)
 
-    const happySimilarity = termProbability.reduce((a, b) => a * b) * happyProbability;
-    const notHappySimilarity = termProbability.reduce((a, b) => a * b) * notHappyProbability;
+    const positiveSimilarity = termProbability.reduce((a, b) => a * b) * positiveProbability;
+    const negativeSimilarity = termProbability.reduce((a, b) => a * b) * negativeProbability;
+    
+    const prediction = positiveSimilarity > negativeSimilarity ? "positive" : "negative";
 
-    let prediction = happySimilarity > notHappySimilarity ? "happy" : "not happy";
-
-    return {happySimilarity: happySimilarity, notHappySimilarity: notHappySimilarity, prediction};
+    return {positiveSimilarity, negativeSimilarity, prediction};    
 }

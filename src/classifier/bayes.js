@@ -5,7 +5,7 @@ const getTrainingSetByClass = (trainingSet, label = null) => {
         return trainingSet;
     }
 
-    return trainingSet.filter((c) => c.corpus_details[0].label === label);
+    return trainingSet.filter((c) => c.label === label);
 
 }
 

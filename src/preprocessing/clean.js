@@ -22,13 +22,14 @@ const trim = (input) => {
     return input.trim().replace(/\s\s+/g, ' ');;
 }
 
+
 /**
- * Removes every numeric char or punctuation
+ * Removes every numeric char or punctuation and twitter features
  * @param input {string} text
  * @returns {string} cleaned text
  */
-const removeSpecialCharactersAndNumbers = (input) => {
-    return input.replace(/[^a-z ]/g, '');
+const removeTweetFeatures = (input) => {
+    return input.replace(/(@[A-Za-z0-9]+)|([^0-9A-Za-z \t])|(\w+:\/\/\S+)/g, '')
 }
 
 /**
@@ -37,7 +38,7 @@ const removeSpecialCharactersAndNumbers = (input) => {
  * @returns {string}
  */
 const cleanInput = (input) => {
-    return trim(removeSpecialCharactersAndNumbers(toLowerCase(input)));
+    return trim(removeTweetFeatures(toLowerCase(input)));
 }
 
 export default cleanInput;

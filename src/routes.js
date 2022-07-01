@@ -1,7 +1,7 @@
 import express from 'express';
 import cleanText from './preprocessing/index.js';
 import {selectKBest} from './features/featureSelection.js';
-import {classify} from './classifier/classifier.js';
+import {cosineSimilarity} from './classifier/classifier.js';
 
 const Router = express.Router;
 
@@ -27,14 +27,13 @@ routes.post('/clean', (req, res) => {
 });
 
 routes.post('/selectkbest', (req, res) => {
-    console.log(req.body);
     const {terms, k, metric, useSum} = req.body;
     const result = selectKBest(terms, k, metric, useSum);
     return res.json(result);
 });
 
 routes.get('/teste', async (req, res)=> {
-    const result = await classify('we paid well over the odds for this hotel but found it a greation location, only across the road from Macy\'s. Well worth a stay but keep looking as the price keeps going up and down.');
+    const result = await cosineSimilarity('@USAirways  thank you! Glad to be heading home! Great people at your call center!');
     return res.json(result);
 })
 

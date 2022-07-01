@@ -25,7 +25,7 @@ Corpus.prototype.getDocuments = async function () {
     // Establish connection to db
     var db = await Mongo.getDbConnection();
     return new Promise((resolve, reject) => {
-        db.collection('corpus').find({}, {}).toArray(function (err, docs) {
+        db.collection('corpus_projeto').find({}).toArray(function (err, docs) {
             if (err) reject(err);
             else {
                 resolve(docs);
@@ -44,8 +44,8 @@ Corpus.prototype.getDocumentsByLabel = async function (label, limit) {
         }
 
 
-        const filter = label ? {"label": label} : {};
-        db.collection('corpus').find(filter, options).toArray(function (err, docs) {
+        const filter = label ? {"airline_sentiment": label} : {};
+        db.collection('corpus_projeto').find(filter, options).toArray(function (err, docs) {
             if (err) reject(err);
             else {
                 resolve(docs);
@@ -59,7 +59,7 @@ Corpus.prototype.getDocumentsById = async function (id) {
     // Establish connection to db
     var db = await Mongo.getDbConnection();
     return new Promise((resolve, reject) => {
-        db.collection('corpus').find({"id": id}, {}).toArray(function (err, docs) {
+        db.collection('corpus_projeto').find({"tweet_id": id}, {}).toArray(function (err, docs) {
             if (err) reject(err);
             else {
                 resolve(docs);

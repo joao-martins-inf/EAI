@@ -8,7 +8,7 @@ import {Mongo} from "./connect.js";
 export const insert = async (records) => {
     // Establish connection to db
     let db = await Mongo.getDbConnection();
-    db.collection('best_k_features').insertMany(records, (err) => {
+    db.collection('best_k_features_projeto').insertMany(records, (err) => {
         return new Promise((resolve, reject) => {
             if(err) reject(err);
             resolve()
@@ -22,7 +22,7 @@ export const insert = async (records) => {
  */
 export const getAll = async () => {
     let db = await Mongo.getDbConnection();
-    db.collection('best_k_features').find({}).toArray(function (err, docs) {
+    db.collection('best_k_features_projeto').find({}).toArray(function (err, docs) {
         return new Promise((resolve, reject) => {
             if (err)
                 reject(err);
