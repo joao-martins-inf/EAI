@@ -53,7 +53,6 @@ export function exists(term, text) {
  * @returns {number} term frequency value
  */
 export function tf(term, text) {
-    //TODO não está preparado para bigramas PROBLEM: words
     return term.split(' ').length > 1 ? (numberOfOccurrences(term, text) / words(text)) * 2: numberOfOccurrences(term, text) / words(text);
 }
 

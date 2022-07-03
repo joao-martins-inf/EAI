@@ -97,8 +97,25 @@ export const tfidfVector = (bagOfWordsArr, termsArr) => {
     return bagOfWordsArr;
 }
 
+/**
+ * 
+ * @param {*} termsArr {Term[]} all with the same name
+ */
 export const sumVector = (termsArr) => {
+    const term = new Term(termsArr[0].name, 0, 0, termsArr[0].docId)
 
+    const docsWithTerm = terms.filter((term) => term.binaryVector).length;
+    const nDocs = terms.length;
+    const idfTerm = idf(nDocs, docsWithTerm);
+
+    for (let index in termsArr) {
+        term.setOccurrences(term.occurrences + termsArr[index].occurrences)
+        term.setTf(termsArr[index].tf)
+        term.setBinary(termsArr[index].binary)
+        term.setTfIdf(tfidf(termsArr[index].tf, idfTerm))
+    }
+
+    return term;
 }
 
 /**
@@ -113,5 +130,10 @@ export const sumBinary = (binaryVector) => {
 }
 
 export const avgVector = (termsArr) => {
+    const term = sumVector(termsArr);
 
+    term.setOccurrences(term.occurrences / termsArr.length)
+    term.setTf(term.tf / termsArr.length)
+    term.setBinary(term.binary / termsArr.length)
+    // tfidf?
 }

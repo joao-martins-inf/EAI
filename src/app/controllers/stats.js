@@ -10,9 +10,9 @@ class statsController {
      *
      * @param Object array array with the predictedClass realClass and the doc
      */
-    confusionMatrix = (array) => {
-        const prediction = ['woman', 'man', 'man', 'woman', 'man', 'woman'];
-        const real = ['woman', 'man', 'woman', 'woman', 'woman', 'woman'];
+    confusionMatrix = (prediction, real) => {
+        //const prediction = ['woman', 'man', 'man', 'woman', 'man', 'woman'];
+        //const real = ['woman', 'man', 'woman', 'woman', 'woman', 'woman'];
 
         if(prediction.length !== real.length) return;
 

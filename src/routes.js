@@ -1,12 +1,13 @@
 import express from 'express';
 import cleanText from './preprocessing/index.js';
 import {selectKBest} from './features/featureSelection.js';
-import {cosineSimilarity} from './classifier/classifier.js';
+import {cosineSimilarity, classify} from './classifier/classifier.js';
 
 const Router = express.Router;
 
 import {CorpusController} from './app/controllers/corpus.js';
 import {TrainController} from './app/controllers/train.js';
+import {TestController} from './app/controllers/test.js';
 
 const routes = new Router();
 
@@ -32,9 +33,21 @@ routes.post('/selectkbest', (req, res) => {
     return res.json(result);
 });
 
-routes.get('/teste', async (req, res)=> {
-    const result = await cosineSimilarity('@USAirways  thank you! Glad to be heading home! Great people at your call center!');
+routes.get('/testeClassify', async (req, res)=> {
+    const result = await classify('@USAirways / @AmericanAir are incompetent');
     return res.json(result);
 })
+
+routes.get('/testeCosine', async (req, res)=> {
+    const result = await cosineSimilarity('@USAirways / @AmericanAir are incompetent');
+    return res.json(result);
+})
+
+routes.get('/test', async (req, res) => {
+    const result = await TestController.classifyTestSet();
+    return res.json(result);
+})
+
+
 
 export default routes;

@@ -133,8 +133,8 @@ class trainController {
         await Promise.all(positiveResults, negativeResults);
 
         //classVector = {positive: happyResults[0], negative: notHappyResults[0]}
-        return res.json(classVector);
-        //return res.json({});
+        //return res.json(classVector);
+        return res.json({});
     }
 
     /**
@@ -150,75 +150,6 @@ class trainController {
         uniqueUnigram = idfVector(uniqueUnigram, docs.length, docs);
         uniqueUnigram = tfidfVector(uniqueUnigram, docs);
         return Promise.resolve(uniqueUnigram);
-    }
-
-    classVectors = async () => {
-        let bestKFeatures = await getAll();
-        const positive = [];
-        const negative = [];
-
-        bestKFeatures.map(e => {
-            const term = new Term(e.name, e.binay, e.occurences, e.docId, e.tf, e.tweet_idf, e.tfidf, metric);
-            if (e.label === 'positive') {
-                // TODO nao temos e.ngram nem e.type
-                if (e.ngram === 1) {
-                    if (e.type === 'avg') {
-                        positive.termsAvgMetric.push(term)
-                    } else if (e.type === 'sum') {
-                        positive.termsSumMetric.push(term)
-                    }
-                } else if (e.ngram === 2) {
-                    if (e.type === 'avg') {
-                        positive.bigramsTermsAvgMetric.push(term)
-                    } else if (e.type === 'sum') {
-                        positive.bigramsTermsSumMetric.push(term)
-                    }
-                }
-            } else {
-                if (e.ngram === 1) {
-                    if (e.type === 'avg') {
-                        negative.termsAvgMetric.push(term)
-                    } else if (e.type === 'sum') {
-                        negative.termsSumMetric.push(term)
-                    }
-                } else if (e.ngram === 2) {
-                    if (e.type === 'avg') {
-                        negative.bigramsTermsAvgMetric.push(term)
-                    } else if (e.type === 'sum') {
-                        negative.bigramsTermsSumMetric.push(term)
-                    }
-                }
-            }
-        })
-
-        const result = {
-            positive: {
-                // TODO nao temos e.metric
-                termsSumMetrics: formatByMetrics ? splitByMetrics(positiveResults.termsSumMetrics) : [],
-                termsAvgMetric: formatByMetrics ? splitByMetrics(positiveResults.termsAvgMetrics) : [],
-                bigramsTermsSumMetrics: formatByMetrics ? splitByMetrics(positiveResults.bigramsTermsSumMetrics) : [],
-                bigramsTermsAvgMetrics: formatByMetrics ? splitByMetrics(positiveResults.bigramsTermsAvgMetrics) : []
-            },
-            negative: {
-                termsSumMetrics: formatByMetrics ? splitByMetrics(negativeResults.termsSumMetrics) : [],
-                termsAvgMetric: formatByMetrics ? splitByMetrics(negativeResults.termsAvgMetrics) : [],
-                bigramsTermsSumMetrics: formatByMetrics ? splitByMetrics(negativeResults.bigramsTermsSumMetrics) : [],
-                bigramsTermsAvgMetrics: formatByMetrics ? splitByMetrics(negativeResults.bigramsTermsAvgMetrics) : []
-            }
-        }
-
-        return {
-            positive: {
-                bagOfWords: result.positive.termsAvgMetric.tfidf.map(e => e.name),
-                idf: result.positive.termsAvgMetric.tfidf.map(e => e.tweet_idf),
-                tfidf: resresult.positive.termsAvgMetric.tfidf.map(e => e.tfidf)
-            },
-            negative: {
-                bagOfWords: result.negative.termsAvgMetric.tfidf.map(e => e.name),
-                idf: result.negative.termsAvgMetric.tfidf.map(e => e.tweet_idf),
-                tfidf: resresult.negative.termsAvgMetric.tfidf.map(e => e.tfidf)
-            }
-        }
     }
 }
 

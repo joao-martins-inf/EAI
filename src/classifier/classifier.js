@@ -16,7 +16,7 @@ export const cosineSimilarity = (text) => {
     let tfidfNegative = getTfidf("negative", "unigram");
     let tfIdfVector = getTfIdfVector("negative", "unigram", uniqueTerms).map(item => item.tfidf);
 
-    const positiveSimilarity = calculateCosineSimilarity(tfidfPositive, tfIdfVector);
+    const positiveSimilarity = calculateCosineSimilarity(tfidfPositive, tfIdfVector);    
     
     tfIdfVector = getTfIdfVector("positive", "unigram", uniqueTerms).map(item => item.tfidf);
     const negativeSimilarity = calculateCosineSimilarity(tfidfNegative, tfIdfVector);
