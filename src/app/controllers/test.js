@@ -1,15 +1,17 @@
 import { Stats } from 'fs';
 import {classify, cosineSimilarity} from '../../classifier/classifier.js'
 import {test} from '../../dal/test.js'
+import {train} from '../../dal/train.js'
 import {StatsController} from '../controllers/stats.js'
 
 class testController {
 
     async classify(testingSet) {
         const arr = [];
+        const trainingSet = await train.getTrainingSet();
         for (let row in testingSet) {
             //const similarity = await cosineSimilarity(testingSet[row].text)
-            const similarity = await classify(testingSet[row].text);
+            const similarity = await classify(testingSet[row].text, trainingSet);
             let objRes =  {cat: similarity.chosenCategory, prob: similarity.maxProb}
             arr.push(objRes);
         }

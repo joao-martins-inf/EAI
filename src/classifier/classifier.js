@@ -78,7 +78,7 @@ const calculateCosineSimilarity = (vector1, vector2) => {
     return (dotProduct) / (mV1) * (mV2);
 }
 
-export const classify = async (text) => {
+export const classify = (text, trainingSet) => {
     let maxProbability = -Infinity
     let chosenCategory = null;
     const categories = ['positive', 'negative'];
@@ -91,7 +91,7 @@ export const classify = async (text) => {
     //iterate categories to find the one with max prob
     for (let i = 0; i < categories.length; i++) {
         //overall probability of this category
-        const catProbability = await calculateProbability(categories[i]);
+        const catProbability = calculateProbability(categories[i], trainingSet);
         //take the log to avoid underflow
         let logProbability = Math.log(catProbability);
 
@@ -109,8 +109,6 @@ export const classify = async (text) => {
         }
     }
 
-
-
     return {chosenCategory: chosenCategory, maxProb: maxProbability};
 }
 
@@ -121,10 +119,10 @@ const tokenProbability = (token, cat) => {
     //how many times this word/token has occurred in documents mapped to this category
     var wordFrequencyCount = unigramArr.reduce((a,b) =>{
         return b === token ? a+1 : a;
-    })
+    }, 0)
 
     //what is the count of all words that have ever been mapped to this category
-    var wordCount = unigramArr;
+    var wordCount = unigramArr.length;
 
     //use laplace Add-1 Smoothing equation
     return ( wordFrequencyCount + 1 ) / ( wordCount )

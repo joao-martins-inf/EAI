@@ -5,12 +5,11 @@ const getTrainingSetByClass = (trainingSet, label = null) => {
         return trainingSet;
     }
 
-    return trainingSet.filter((c) => c.label === label);
+    return trainingSet.filter((c) => c.airline_sentiment === label);
 
 }
 
-export const calculateProbability = async (label) => {
-    const trainingSet = await train.getTrainingSet();
+export const calculateProbability = (label, trainingSet) => {
     const a = getTrainingSetByClass(trainingSet, label).length;
     const b = trainingSet.length;
 
