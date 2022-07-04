@@ -60,9 +60,18 @@ export const numberOfOccurrencesVector = (bagOfWordsArr, termsArr) => {
  * @returns {Term[]}
  */
 export const tfVector = (bagOfWordsArr, termsArr) => {
-    bagOfWordsArr.forEach(term => {
-        term.setTf(tf(term.name, termsArr.join(' ')))
-    })
+    try{
+        bagOfWordsArr.forEach(term => {
+            term.setTf(tf(term.name, termsArr.join(' ')))
+        })
+    }
+    catch(err) {
+        /* 
+        console.log(bagOfWordsArr);
+        console.log('--------')
+        console.log(termsArr);
+        */
+    }
     return bagOfWordsArr;
 }
 

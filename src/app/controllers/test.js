@@ -26,7 +26,7 @@ class testController {
         const confusionMatrix = StatsController.confusionMatrix(arrPrediction, arrReal);
         const precision = StatsController.precision(confusionMatrix)
         const recall = StatsController.recall(confusionMatrix)
-        const fMeasure = StatsController.fMeasure(confusionMatrix)
+        const fMeasure = StatsController.fMeasure(precision, recall)
 
         return {
             arrPrediction,

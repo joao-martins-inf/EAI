@@ -8,18 +8,25 @@ import {classVector} from '../app/controllers/train.js';
  * @param {string} text
  */
 export const cosineSimilarity = (text) => {
-    let cleanText = preprocess(text, 1);
-    let uniqueTerms = addUniqueTerms([], cleanText);
+    // clean and get unique terms
+    const cleanText = preprocess(text, 1);
+    const uniqueTerms = addUniqueTerms([], cleanText);
 
-    uniqueTerms = tfVector(uniqueTerms, [...cleanText]);
-    let tfidfPositive = getTfidf("positive", "unigram");
-    let tfidfNegative = getTfidf("negative", "unigram");
-    let tfIdfVector = getTfIdfVector("negative", "unigram", uniqueTerms).map(item => item.tfidf);
+    // get positive similarity
+    const unigramPositiveArr = classVector.positive.unigram.map((a) => a.map((b) => b.name)).flat(1);
+    const tfVectorPositive = tfVector(uniqueTerms, unigramPositiveArr);
+    const tfidfPositive = getTfidf("positive", "unigram");
+    const tfIdfVectorPositive = getTfIdfVector("positive", "unigram", tfVectorPositive).map(item => item.tfidf);
 
-    const positiveSimilarity = calculateCosineSimilarity(tfidfPositive, tfIdfVector);    
+    const positiveSimilarity = calculateCosineSimilarity(tfidfPositive, tfIdfVectorPositive);    
     
-    tfIdfVector = getTfIdfVector("positive", "unigram", uniqueTerms).map(item => item.tfidf);
-    const negativeSimilarity = calculateCosineSimilarity(tfidfNegative, tfIdfVector);
+    // get negative similarity
+    const unigramNegativeArr = classVector.negative.unigram.map((a) => a.map((b) => b.name)).flat(1);
+    const tfVectorNegative = tfVector(uniqueTerms, unigramNegativeArr);
+    const tfidfNegative = getTfidf("negative", "unigram");
+    const tfIdfVectorNegative = getTfIdfVector("negative", "unigram", tfVectorNegative).map(item => item.tfidf);
+
+    const negativeSimilarity = calculateCosineSimilarity(tfidfNegative, tfIdfVectorNegative);    
     
     const prediction = positiveSimilarity > negativeSimilarity ? "positive" : "negative";
 
@@ -72,19 +79,30 @@ const calculateCosineSimilarity = (vector1, vector2) => {
 }
 
 export const classify = async (text) => {
-    let cleanText = preprocess(text, 1);
-    let uniqueTerms = addUniqueTerms([], cleanText);
-    const unigrams = classVector.positive.unigram.flat(1);
-    const bagOfWords = addUniqueTerms(unigrams, cleanText);
 
-    uniqueTerms = tfVector(bagOfWords, [...cleanText]);
+    // clean and get unique terms
+    const cleanText = preprocess(text, 1);
+    const uniqueTerms = addUniqueTerms([], cleanText);
+
+    // get positive similarity
+    const unigramPositiveArr = classVector.positive.unigram.map((a) => a.map((b) => b.name)).flat(1);
+    const tfVectorPositive = tfVector(uniqueTerms, unigramPositiveArr);
+    const termPositiveProbability = tfVectorPositive.map((value) => {
+        return value.occurrences / tfVectorPositive.length;
+    });
     const positiveProbability = await calculateProbability('positive');
-    const negativeProbability = await calculateProbability('negative');
-    const termProbability = uniqueTerms.map((term) => term.tf / uniqueTerms.length)
+    const positiveSimilarity = termPositiveProbability.reduce((a, b) => a * b) * positiveProbability;
 
-    const positiveSimilarity = termProbability.reduce((a, b) => a * b) * positiveProbability;
-    const negativeSimilarity = termProbability.reduce((a, b) => a * b) * negativeProbability;
     
+    // get negative similarity
+    const unigramNegativeArr = classVector.negative.unigram.map((a) => a.map((b) => b.name)).flat(1);
+    const tfVectorNegative = tfVector(uniqueTerms, unigramNegativeArr);
+    const termNegativeProbability = tfVectorNegative.map((value) => {
+        return value.occurrences / tfVectorNegative.length;
+    });
+    const negativeProbability = await calculateProbability('negative');
+    const negativeSimilarity = termNegativeProbability.reduce((a, b) => a * b) * negativeProbability;
+
     const prediction = positiveSimilarity > negativeSimilarity ? "positive" : "negative";
 
     return {positiveSimilarity, negativeSimilarity, prediction};    

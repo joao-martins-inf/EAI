@@ -65,11 +65,11 @@ class trainController {
         let negativeUniqueUnigram = [];
         let negativeUniqueBigram = [];
 
-        let positiveResults = positiveDocs.map((doc) => {
+       const positiveDocsProcessed = positiveDocs.map((doc) => {
             const n1 = preprocess(doc.text, 1);
             const n2 = preprocess(doc.text, 2);
-            positiveUniqueUnigram = addUniqueTerms(positiveUniqueUnigram, n1, doc.tweet_id);
-            positiveUniqueBigram = addUniqueTerms(positiveUniqueBigram, n2, doc.tweet_id);
+            positiveUniqueUnigram = addUniqueTerms(positiveUniqueUnigram.map(a => {return a.clone()}), n1, doc.tweet_id);
+            positiveUniqueBigram = addUniqueTerms(positiveUniqueBigram.map(a => {return a.clone()}), n2, doc.tweet_id);
 
 
             return {
@@ -81,29 +81,34 @@ class trainController {
                 bigram: n2
             }
         });
+
+        let bagOfWordsN1
+        let bagOfWordsN2
+        const positiveResults = [];
+        const negativeResults = [];
     
         // complete object information after obtaining bag of words
-        positiveResults = positiveResults.map(async (doc) => {
-            let bagOfWordsN1 = await this.processBagOfWords(positiveUniqueUnigram, doc.unigramSorted);
-            let bagOfWordsN2 = await this.processBagOfWords(positiveUniqueBigram, doc.bigram);
+        for(let doc in positiveDocsProcessed) {
+            bagOfWordsN1 = await this.processBagOfWords(positiveUniqueUnigram.map(a => {return a.clone()}), positiveDocsProcessed[doc].unigramSorted);
+            bagOfWordsN2 = await this.processBagOfWords(positiveUniqueBigram.map(a => {return a.clone()}), positiveDocsProcessed[doc].bigram);
             
-            classVector['positive'].unigram.push(bagOfWordsN1.filter(term => term.occurrences > 0));
-            classVector['positive'].bigram.push(bagOfWordsN2.filter(term => term.occurrences > 0));
+            classVector['positive'].unigram[doc] = bagOfWordsN1.filter(term => term.occurrences > 0);
+            classVector['positive'].bigram[doc] = bagOfWordsN2.filter(term => term.occurrences > 0);
 
-            return {
-                ...doc,
+            positiveResults[doc] = {
+                ...positiveDocsProcessed[doc],
                 tfUnigramVector: bagOfWordsN1.filter(term => term.tf > 0).map(term => term.showTf()),
                 tfBigramVector: bagOfWordsN2.filter(term => term.tf > 0).map(term => term.showTf()),
                 occurrencesUnigramVector: bagOfWordsN1.filter(term => term.occurrences > 0).map(term => term.showOcc()),
                 occurrencesBigramVector: bagOfWordsN2.filter(term => term.occurrences > 0).map(term => term.showOcc())
             }
-        });
+        }
 
-        let negativeResults = negativeDocs.map((doc) => {
+        const negativeDocsProcessed = negativeDocs.map((doc) => {
             const n1 = preprocess(doc.text, 1);
             const n2 = preprocess(doc.text, 2);
-            negativeUniqueUnigram = addUniqueTerms(negativeUniqueUnigram, n1, doc.tweet_id);
-            negativeUniqueBigram = addUniqueTerms(negativeUniqueBigram, n2, doc.tweet_id);
+            negativeUniqueUnigram = addUniqueTerms(negativeUniqueUnigram.map(a => {return a.clone()}), n1, doc.tweet_id);
+            negativeUniqueBigram = addUniqueTerms(negativeUniqueBigram.map(a => {return a.clone()}), n2, doc.tweet_id);
             return {
                 id: doc.tweet_id,
                 originalText: doc.text,
@@ -114,23 +119,21 @@ class trainController {
             }
         })
 
-        negativeResults = negativeResults.map(async (doc) => {
-            let bagOfWordsN1 = await this.processBagOfWords(negativeUniqueUnigram, doc.unigramSorted);
-            let bagOfWordsN2 = await this.processBagOfWords(negativeUniqueBigram, doc.bigram);
+        for (let doc in negativeDocsProcessed) {
+            bagOfWordsN1 = await this.processBagOfWords(negativeUniqueUnigram.map(a => {return a.clone()}), negativeDocsProcessed[doc].unigramSorted);
+            bagOfWordsN2 = await this.processBagOfWords(negativeUniqueBigram.map(a => {return a.clone()}), negativeDocsProcessed[doc].bigram);
         
             classVector['negative'].unigram.push(bagOfWordsN1.filter(term => term.occurrences > 0));
             classVector['negative'].bigram.push(bagOfWordsN2.filter(term => term.occurrences > 0));
 
-            return {
-                ...doc,
+            negativeDocs[doc] = {
+                ...negativeDocsProcessed[doc],
                 tfUnigramVector: bagOfWordsN1.filter(term => term.tf > 0).map(term => term.showTf()),
                 tfBigramVector: bagOfWordsN2.filter(term => term.tf > 0).map(term => term.showTf()),
                 occurrencesUnigramVector: bagOfWordsN1.filter(term => term.occurrences > 0).map(term => term.showOcc()),
                 occurrencesBigramVector: bagOfWordsN2.filter(term => term.occurrences > 0).map(term => term.showOcc())
             }
-        });
-
-        await Promise.all(positiveResults, negativeResults);
+        }
 
         //classVector = {positive: happyResults[0], negative: notHappyResults[0]}
         //return res.json(classVector);
@@ -143,12 +146,12 @@ class trainController {
      * @param docs {string[]}
      * @returns {Promise<Term[]>}
      */
-    processBagOfWords = async (uniqueUnigram, docs) => {
-        uniqueUnigram = binaryVector(uniqueUnigram, docs);
-        uniqueUnigram = numberOfOccurrencesVector(uniqueUnigram, docs);
-        uniqueUnigram = tfVector(uniqueUnigram, docs);
-        uniqueUnigram = idfVector(uniqueUnigram, docs.length, docs);
-        uniqueUnigram = tfidfVector(uniqueUnigram, docs);
+    processBagOfWords = async (uniqueUnigram, termsArr) => {
+        uniqueUnigram = binaryVector(uniqueUnigram, termsArr);
+        uniqueUnigram = numberOfOccurrencesVector(uniqueUnigram, termsArr);
+        uniqueUnigram = tfVector(uniqueUnigram, termsArr);
+        uniqueUnigram = idfVector(uniqueUnigram, termsArr.length, termsArr);
+        uniqueUnigram = tfidfVector(uniqueUnigram, termsArr);
         return Promise.resolve(uniqueUnigram);
     }
 }

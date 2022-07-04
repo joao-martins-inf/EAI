@@ -22,6 +22,10 @@ export default class Term {
         this._metric = metric;
     }
 
+    clone = (term) => {
+        return new Term(this._name, this._binary, this._occurrences, this._docId, this._tf, this._idf, this._tfidf, this._metric);
+    }
+
     /**
      * @memberOf Term
      * @method

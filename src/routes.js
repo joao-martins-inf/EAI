@@ -34,12 +34,12 @@ routes.post('/selectkbest', (req, res) => {
 });
 
 routes.get('/testeClassify', async (req, res)=> {
-    const result = await classify('@USAirways / @AmericanAir are incompetent');
+    const result = await classify('@VirginAmerica So excited for my first cross country flight LAX to MCO I\'ve heard nothing but great things about Virgin America. #29DaysToGo');
     return res.json(result);
 })
 
 routes.get('/testeCosine', async (req, res)=> {
-    const result = await cosineSimilarity('@USAirways / @AmericanAir are incompetent');
+    const result = await cosineSimilarity('@VirginAmerica and it\'s a really big bad thing about it');
     return res.json(result);
 })
 
