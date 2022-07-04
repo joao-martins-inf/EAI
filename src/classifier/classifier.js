@@ -1,5 +1,5 @@
 import preprocess from '../preprocessing/index.js';
-import {calculateProbability} from './bayes.js';
+import {calculateProbability, frequencyTable} from './bayes.js';
 import {addUniqueTerms, tfVector} from '../features/bagOfWords.js'
 import {classVector} from '../app/controllers/train.js';
 
@@ -79,31 +79,53 @@ const calculateCosineSimilarity = (vector1, vector2) => {
 }
 
 export const classify = async (text) => {
+    let maxProbability = -Infinity
+    let chosenCategory = null;
+    const categories = ['positive', 'negative'];
 
     // clean and get unique terms
     const cleanText = preprocess(text, 1);
     const uniqueTerms = addUniqueTerms([], cleanText);
+    const freqTable = frequencyTable(uniqueTerms);
 
-    // get positive similarity
-    const unigramPositiveArr = classVector.positive.unigram.map((a) => a.map((b) => b.name)).flat(1);
-    const tfVectorPositive = tfVector(uniqueTerms, unigramPositiveArr);
-    const termPositiveProbability = tfVectorPositive.map((value) => {
-        return value.occurrences / tfVectorPositive.length;
-    });
-    const positiveProbability = await calculateProbability('positive');
-    const positiveSimilarity = termPositiveProbability.reduce((a, b) => a * b) * positiveProbability;
+    //iterate categories to find the one with max prob
+    for (let i = 0; i < categories.length; i++) {
+        //overall probability of this category
+        const catProbability = await calculateProbability(categories[i]);
+        //take the log to avoid underflow
+        let logProbability = Math.log(catProbability);
 
-    
-    // get negative similarity
-    const unigramNegativeArr = classVector.negative.unigram.map((a) => a.map((b) => b.name)).flat(1);
-    const tfVectorNegative = tfVector(uniqueTerms, unigramNegativeArr);
-    const termNegativeProbability = tfVectorNegative.map((value) => {
-        return value.occurrences / tfVectorNegative.length;
-    });
-    const negativeProbability = await calculateProbability('negative');
-    const negativeSimilarity = termNegativeProbability.reduce((a, b) => a * b) * negativeProbability;
+        //determine P( w | c ) for each word `w` in the text
+        Object.keys(freqTable).forEach(token => {
+            const frequencyInText = freqTable[token];
+            const tokenProb = tokenProbability(token, categories[i]);
 
-    const prediction = positiveSimilarity > negativeSimilarity ? "positive" : "negative";
+            //determine the log of the P( w | c ) for this word
+            logProbability += frequencyInText * Math.log(tokenProb)
+        });
+        if (logProbability > maxProbability) {
+            maxProbability = logProbability
+            chosenCategory = categories[i]
+        }
+    }
 
-    return {positiveSimilarity, negativeSimilarity, prediction};    
+
+
+    return {chosenCategory: chosenCategory, maxProb: maxProbability};
+}
+
+const tokenProbability = (token, cat) => {
+    const unigramArr = classVector[cat].unigram.map((a) => a.map((b) => b.name)).flat(1);
+
+
+    //how many times this word/token has occurred in documents mapped to this category
+    var wordFrequencyCount = unigramArr.reduce((a,b) =>{
+        return b === token ? a+1 : a;
+    })
+
+    //what is the count of all words that have ever been mapped to this category
+    var wordCount = unigramArr;
+
+    //use laplace Add-1 Smoothing equation
+    return ( wordFrequencyCount + 1 ) / ( wordCount )
 }
