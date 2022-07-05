@@ -12,8 +12,7 @@ class testController {
         for (let row in testingSet) {
             //const similarity = await cosineSimilarity(testingSet[row].text)
             const similarity = await classify(testingSet[row].text, trainingSet);
-            let objRes =  {cat: similarity.chosenCategory, prob: similarity.maxProb}
-            arr.push(objRes);
+            arr.push(similarity.chosenCategory);
         }
 
         return arr;

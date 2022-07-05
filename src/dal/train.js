@@ -29,7 +29,7 @@ Train.prototype.getTrainingSet = async function () {
     // Establish connection to db
     let db = await Mongo.getDbConnection();
     return new Promise((resolve, reject) => {
-        db.collection('training_set_projeto').find({}, {limit: 500}).toArray(function (err, docs) {
+        db.collection('training_set_projeto').find({}).toArray(function (err, docs) {
             if (err) reject(err);
             else {
                 resolve(docs);
